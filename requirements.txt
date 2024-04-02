@@ -8,5 +8,5 @@ pytest==7.1.2
 SQLAlchemy==1.4.39
 pg8000==1.29.1
 python-dotenv==1.0.0
-dbt-core==1.7.0
+dbt-core==1.7.3
 dbt-snowflake==1.7.0
