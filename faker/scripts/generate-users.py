@@ -1,4 +1,3 @@
-#%%
 from faker import Faker
 from datetime import datetime, timezone
 import random
@@ -106,15 +105,15 @@ for i in range(1000):
 
     last_name = fake.last_name()
 
-    # Generate fake address with country name appended
-    address = fake.address().title().replace('\n', ', ') + ', ' + country
-
     # Have a 10% chance of user residing outside of their country of origin
     if random.random() < 0.1:
-        new_locale, new_country = random.choice(locales)
+        new_locale, address_country = random.choice(locales)
         new_fake = Faker(new_locale)
         new_fake.seed_locale(new_locale)
-        address = new_fake.address().title().replace('\n', ', ') + ', ' + new_country
+        address = new_fake.address().title().replace('\n', ', ') 
+    else:
+        address_country = country
+        address = fake.address().title().replace('\n', ', ')
 
     # Generate current timestamp with timezone as last update
     last_update = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -131,6 +130,7 @@ for i in range(1000):
         "race": race,
         "origin": country,
         "address": address,
+        "address_country": address_country,
         "last_update": last_update,
     }
     user_data.append(user_record)
