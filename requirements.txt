@@ -1,0 +1,12 @@
+faker==23.2.1
+requests==2.31.0
+jupyter==1.0.0
+pandas==1.4.3
+python-dotenv==1.0.0
+pyarrow==14.0.1
+pytest==7.1.2
+SQLAlchemy==1.4.39
+pg8000==1.29.1
+python-dotenv==1.0.0
+dbt-core==1.7.0
+dbt-snowflake==1.7.0
