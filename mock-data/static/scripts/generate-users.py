@@ -52,13 +52,11 @@ locales = [
     ('pl_PL', 'PL', 'Poland'),
 ]
 
-# Mean and standard deviation for height and weight for males
 height_mean_male = 175  
 height_stddev_male = 8  
 weight_mean_male = 80   
 weight_stddev_male = 10  
 
-# Mean and standard deviation for height and weight for females
 height_mean_female = 162  
 height_stddev_female = 7  
 weight_mean_female = 65   
