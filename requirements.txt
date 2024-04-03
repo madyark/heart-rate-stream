@@ -7,6 +7,7 @@ pyarrow==14.0.1
 pytest==7.1.2
 SQLAlchemy==1.4.39
 pg8000==1.29.1
+fastavro
 kafka-python==2.0.2
 confluent-kafka
 dbt-core==1.7.0
