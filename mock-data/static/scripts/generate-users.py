@@ -34,14 +34,22 @@ def select_from_probabilities(options_with_probabilities: List[Tuple[str, float]
 
     return selected_option
 
-# List of Latin-based locales supported by Faker
+# List of Latin-based locales supported by Faker and corresponding country codes
 locales = [
-    ('en_US', 'United States'), 
-    ('en_GB', 'United Kingdom'), 
-    ('es_ES', 'Spain'), 
-    ('fr_FR', 'France'), 
-    ('it_IT', 'Italy'), 
-    ('pt_PT', 'Portugal')
+    ('en_US', 'US'),
+    ('en_GB', 'GB'),
+    ('en_AU', 'AU'),
+    ('pt_BR', 'BR'),
+    ('es_ES', 'ES'),
+    ('fr_FR', 'FR'),
+    ('de_DE', 'DE'),
+    ('it_IT', 'IT'),
+    ('nl_NL', 'NL'),
+    ('sv_SE', 'SE'),
+    ('no_NO', 'NO'), 
+    ('fi_FI', 'FI'),
+    ('da_DK', 'DK'),
+    ('pl_PL', 'PL'),
 ]
 
 # Mean and standard deviation for height and weight for Males
@@ -78,7 +86,7 @@ races_with_probabilities = [
 ]
 
 user_data = []
-for i in range(1000):
+for i in range(1999):
 
     # Randomly select a locale
     locale, country = random.choice(locales)
@@ -134,6 +142,7 @@ for i in range(1000):
         "last_update": last_update,
     }
     user_data.append(user_record)
+    print(i)
 
 df = pd.DataFrame(user_data)
 csv_file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'users.csv')
