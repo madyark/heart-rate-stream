@@ -1,5 +1,6 @@
 import fastavro
 import json
+import os
 
 # Mock data to be stored as AVRO and JSON file
 data = {
@@ -43,13 +44,13 @@ avro_schema = {
     ]
 }
 
-# Write Avro data to a file
-with open("data.avro", "wb") as avro_file:
+avro_file_path = os.path.join(os.path.dirname(__file__), 'data.avro')
+with open(avro_file_path, "wb") as avro_file:
     fastavro.writer(avro_file, avro_schema, [data])
 
 # Serialize dictionary object to JSON format
 json_string = json.dumps(data, indent=4)
 
-# Write JSON data to a file
-with open("data.json", "w") as json_file:
+json_file_path = os.path.join(os.path.dirname(__file__), 'data.json')
+with open(json_file_path, "w") as json_file:
     json_file.write(json_string)
