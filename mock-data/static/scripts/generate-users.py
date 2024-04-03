@@ -36,20 +36,20 @@ def select_from_probabilities(options_with_probabilities: List[Tuple[str, float]
 
 # List of Latin-based locales supported by Faker and corresponding country codes
 locales = [
-    ('en_US', 'US'),
-    ('en_GB', 'GB'),
-    ('en_AU', 'AU'),
-    ('pt_BR', 'BR'),
-    ('es_ES', 'ES'),
-    ('fr_FR', 'FR'),
-    ('de_DE', 'DE'),
-    ('it_IT', 'IT'),
-    ('nl_NL', 'NL'),
-    ('sv_SE', 'SE'),
-    ('no_NO', 'NO'), 
-    ('fi_FI', 'FI'),
-    ('da_DK', 'DK'),
-    ('pl_PL', 'PL'),
+    ('en_US', 'US', 'United States'),
+    ('en_GB', 'GB', 'United Kingdom'),
+    ('en_AU', 'AU', 'Australia'),
+    ('pt_BR', 'BR', 'Brazil'),
+    ('es_ES', 'ES', 'Spain'),
+    ('fr_FR', 'FR', 'France'),
+    ('de_DE', 'DE', 'Germany'),
+    ('it_IT', 'IT', 'Italy'),
+    ('nl_NL', 'NL', 'Netherlands'),
+    ('sv_SE', 'SE', 'Sweden'),
+    ('no_NO', 'NO', 'Norway'),
+    ('fi_FI', 'FI', 'Finland'),
+    ('da_DK', 'DK', 'Denmark'),
+    ('pl_PL', 'PL', 'Poland'),
 ]
 
 # Mean and standard deviation for height and weight for Males
@@ -89,7 +89,7 @@ user_data = []
 for i in range(1999):
 
     # Randomly select a locale
-    locale, country = random.choice(locales)
+    locale, country_code, country_name = random.choice(locales)
 
     # Generate fake patient data using the selected locale
     fake = Faker(locale)
@@ -115,12 +115,13 @@ for i in range(1999):
 
     # Have a 10% chance of user residing outside of their country of origin
     if random.random() < 0.1:
-        new_locale, address_country = random.choice(locales)
+        new_locale, address_country_code, address_country_name = random.choice(locales)
         new_fake = Faker(new_locale)
         new_fake.seed_locale(new_locale)
         address = new_fake.address().title().replace('\n', ', ') 
     else:
-        address_country = country
+        address_country_code = country_code
+        address_country_name = country_name
         address = fake.address().title().replace('\n', ', ')
 
     # Generate current timestamp with timezone as last update
@@ -136,13 +137,14 @@ for i in range(1999):
         "weight": weight,
         "blood_type": blood_type,
         "race": race,
-        "origin": country,
+        "origin_country_code": country_code,
+        "origin_country_name": country_name,
         "address": address,
-        "address_country": address_country,
+        "address_country_code": address_country_code,
+        "address_country_name": address_country_name,
         "last_update": last_update,
     }
     user_data.append(user_record)
-    print(i)
 
 df = pd.DataFrame(user_data)
 csv_file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'users.csv')
