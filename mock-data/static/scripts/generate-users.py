@@ -19,7 +19,7 @@ def select_from_probabilities(options_with_probabilities: List[Tuple[str, float]
     total_probability = 0
 
     # Calculate cumulative probabilities
-    for option, probability in options_with_probabilities:
+    for _, probability in options_with_probabilities:
         total_probability += probability
         cumulative_probabilities.append(total_probability)
 
@@ -34,7 +34,7 @@ def select_from_probabilities(options_with_probabilities: List[Tuple[str, float]
 
     return selected_option
 
-# List of Latin-based locales supported by Faker and corresponding country codes
+# List of Latin-based locales supported by Faker and corresponding country code and name
 locales = [
     ('en_US', 'US', 'United States'),
     ('en_GB', 'GB', 'United Kingdom'),
@@ -52,13 +52,13 @@ locales = [
     ('pl_PL', 'PL', 'Poland'),
 ]
 
-# Mean and standard deviation for height and weight for Males
+# Mean and standard deviation for height and weight for males
 height_mean_male = 175  
 height_stddev_male = 8  
 weight_mean_male = 80   
 weight_stddev_male = 10  
 
-# Mean and standard deviation for height and weight for Females
+# Mean and standard deviation for height and weight for females
 height_mean_female = 162  
 height_stddev_female = 7  
 weight_mean_female = 65   
