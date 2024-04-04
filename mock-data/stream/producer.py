@@ -7,6 +7,7 @@ import os
 import json
 import sys
 from dotenv import load_dotenv
+import logging
 
 def read_config():
     """Reads the client configuration from client.properties and returns it as a key-value map"""
@@ -35,6 +36,7 @@ def main():
     load_dotenv()
     config = read_config()
     topic = os.environ.get('CONFLUENT_TOPIC')
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
 
     # Create a new producer instance
     producer = Producer(config)
@@ -99,10 +101,10 @@ def main():
                     value=json.dumps(hr_data).encode('utf-8')
                 )
 
-                print(f"Produced message to topic {topic}")
-                print(f"User ID: {hr_data['user_id']}")
-                print(f"Heart Rate: {hr_data['heart_rate']}")
-                print(f"Timestamp: {hr_data['timestamp']}\n")
+                logging.info(f"Produced message to topic {topic}")
+                logging.info(f"User ID: {hr_data['user_id']}")
+                logging.info(f"Heart Rate: {hr_data['heart_rate']}")
+                logging.info(f"Timestamp: {hr_data['timestamp']}\n")
                 
                 # Send any outstanding or buffered messages to the Kafka broker
                 producer.flush()
@@ -110,7 +112,6 @@ def main():
                 time.sleep(3) # Have a small gap between each sensor reading for the user
 
     except KeyboardInterrupt:
-        # Do not print any error messages for keyboard interrupt of infinite while loop
-        pass
+        logging.info("Stream stopped sucessfully")
 
 main()
