@@ -108,8 +108,6 @@ def main():
                 producer.flush()
 
                 time.sleep(3) # Have a small gap between each sensor reading for the user
-            
-            time.sleep(3) 
 
     except KeyboardInterrupt:
         # Do not print any error messages for keyboard interrupt of infinite while loop
