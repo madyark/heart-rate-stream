@@ -101,10 +101,7 @@ def main():
                     value=json.dumps(hr_data).encode('utf-8')
                 )
 
-                logging.info(f"Produced message to topic {topic}")
-                logging.info(f"User ID: {hr_data['user_id']}")
-                logging.info(f"Heart Rate: {hr_data['heart_rate']}")
-                logging.info(f"Timestamp: {hr_data['timestamp']}\n")
+                logging.info(f"Produced message to topic {topic}\nUser ID: {hr_data['user_id']}\nHeart Rate: {hr_data['heart_rate']}\nTimestamp: {hr_data['timestamp']}\n")
                 
                 # Send any outstanding or buffered messages to the Kafka broker
                 producer.flush()
