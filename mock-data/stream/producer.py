@@ -106,7 +106,7 @@ def main():
                 # Send any outstanding or buffered messages to the Kafka broker
                 producer.flush()
 
-                time.sleep(3) # Have a small gap between each sensor reading for the user
+                time.sleep(2) # Have a small gap between each sensor reading for the user
 
     except KeyboardInterrupt:
         logging.info("Stream stopped sucessfully")
