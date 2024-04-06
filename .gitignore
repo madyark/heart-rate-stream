@@ -1,6 +1,9 @@
 # client.properties file (credentials for Confluent Cloud kafka cluster access)
 client.properties
 
+# dbt generated logs directory
+logs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
