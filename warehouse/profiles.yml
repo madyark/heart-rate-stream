@@ -1,4 +1,4 @@
-warehouse: #profile name
+warehouse:
   target: dev
   outputs:
     dev:
