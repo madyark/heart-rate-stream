@@ -1,4 +1,4 @@
-warehouse:
+snowflake_warehouse_profile:
   target: dev
   outputs:
     dev:
