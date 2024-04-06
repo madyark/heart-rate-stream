@@ -1,4 +1,4 @@
--- 
+-- Created stream in ksqldb but not used further as transformations not deemed necessary
 create stream hrdata (
     user_id int,
     heart_rate int,

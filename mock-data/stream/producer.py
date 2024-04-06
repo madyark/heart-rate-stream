@@ -77,8 +77,9 @@ def main():
             # Have the sensor emit a random amount of heart rate readings for the user within a small time period
             sensor_readings = random.randint(1, 4)
 
-            for i in range(sensor_readings):
-                heart_rate = random.randint(round(heart_rate * 0.95), round(heart_rate * 1.1)) # Heart rate will change slightly each time
+            for _ in range(sensor_readings):
+                # Heart rate will change slightly each time
+                heart_rate = random.randint(round(heart_rate * 0.95), round(heart_rate * 1.1)) 
 
                 current_epoch_time = int(time.time())
 
@@ -106,7 +107,8 @@ def main():
                 # Send any outstanding or buffered messages to the Kafka broker
                 producer.flush()
 
-                time.sleep(2) # Have a small gap between each sensor reading for the user
+                # Have a small gap between each sensor reading for the user
+                time.sleep(2) 
 
     except KeyboardInterrupt:
         logging.info("Stream stopped sucessfully")
