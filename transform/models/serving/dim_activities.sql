@@ -25,6 +25,7 @@ deleted_rows as (
 
 final as (
     select
+        {{ dbt_utils.generate_surrogate_key(['ur.activity_id', 'ur.start_date']) }} as activity_key,
         ur.activity_id,
         ur.activity_name,
         ur.start_date,

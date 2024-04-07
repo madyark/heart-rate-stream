@@ -35,7 +35,7 @@ deleted_rows as (
 
 final as (
     select
-        {{ dbt_utils.generate_surrogate_key(['ur.user_id', 'ur.start_date', 'ur.end_date']) }} as user_key,
+        {{ dbt_utils.generate_surrogate_key(['ur.user_id', 'ur.start_date']) }} as user_key,
         ur.user_id,
         ur.first_name,
         ur.last_name,
