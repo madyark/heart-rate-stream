@@ -5,7 +5,7 @@ with updated_rows as (
         user_id,
         first_name,
         last_name,
-        date_of_birth,
+        {{ dob_transform('date_of_birth') }},
         sex,
         height,
         weight,
