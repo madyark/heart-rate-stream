@@ -6,11 +6,11 @@
 
 select 
     user_id,
-    timestamp,
+    timestamp::string as timestamp,
     heart_rate,
-    meta:activity_id::STRING as activity_id,
-    meta:location:latitude::STRING as latitude,
-    meta:location:longitude::STRING as longitude,
+    meta:activity_id::string as activity_id,
+    meta:location:latitude::string as latitude,
+    meta:location:longitude::string as longitude,
     _airbyte_extracted_at as extracted_at
 
 from 
