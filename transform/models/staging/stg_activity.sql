@@ -3,4 +3,4 @@ select
     activity_name, 
     last_update
 
-from {{ source('mock_operational_data', 'users') }}
+from {{ source('operational_data', 'activities') }}
