@@ -11,7 +11,8 @@ select
     _ab_cdc_deleted_at as deleted_at,
     _airbyte_extracted_at as extracted_at
 
-from {{ source('operational_data', 'activities') }} 
+from 
+    {{ source('operational_data', 'activities') }} 
 
 {% if is_incremental() %}
     where extracted_at > (select max(extracted_at) from {{ this }} )
