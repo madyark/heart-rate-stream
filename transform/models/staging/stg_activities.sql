@@ -12,7 +12,7 @@ select
     _airbyte_extracted_at as extracted_at
 
 from 
-    {{ source('operational_data', 'activities') }} 
+    {{ source('stream_data', 'activities') }} 
 
 {% if is_incremental() %}
     where extracted_at > (select max(extracted_at) from {{ this }} )
