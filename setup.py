@@ -1,8 +1,8 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="analytics",
-    packages=find_packages(exclude=["analytics_tests"]),
+    name="orchestrate",
+    packages=find_packages(exclude=["orchestrate_tests"]),
     install_requires=[
         "dagster",
         "dagster-cloud",
