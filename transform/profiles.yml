@@ -1,0 +1,30 @@
+snowflake_warehouse_profile:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: '{{ env_var("SNOWFLAKE_ACCOUNT") }}'
+
+      user: '{{ env_var("SNOWFLAKE_USERNAME") }}'
+      password: '{{ env_var("SNOWFLAKE_PASSWORD") }}'
+
+      role: '{{ env_var("SNOWFLAKE_ROLE") }}'
+      database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
+      warehouse: '{{ env_var("SNOWFLAKE_COMPUTE") }}'
+      schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
+      threads: 12
+      client_session_keep_alive: False
+    
+    prod:
+      type: snowflake
+      account: '{{ env_var("SNOWFLAKE_ACCOUNT") }}'
+
+      user: '{{ env_var("SNOWFLAKE_USERNAME") }}'
+      password: '{{ env_var("SNOWFLAKE_PASSWORD") }}'
+
+      role: '{{ env_var("SNOWFLAKE_ROLE") }}'
+      database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
+      warehouse: '{{ env_var("SNOWFLAKE_COMPUTE") }}'
+      schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
+      threads: 12
+      client_session_keep_alive: False
