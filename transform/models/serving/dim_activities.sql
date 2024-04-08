@@ -42,6 +42,10 @@ final as (
     
     where 
         ur.start_date is not null -- filters out the empty deleted_row field 
+    
+    order by
+        activity_id,
+        start_date
 )
 
 select * from final
