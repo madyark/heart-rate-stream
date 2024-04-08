@@ -9,7 +9,7 @@ dbt_project_dir = Path(__file__).joinpath("..", "..", "..", "..", "transform").r
 dbt_warehouse_resource = DbtCliResource(project_dir=os.fspath(dbt_project_dir))
 
 # Run dbt deps
-dbt_warehouse_resource.cli(["dbt", "deps"]).wait()
+dbt_warehouse_resource.cli(["deps"]).wait()
 
 # Generate manifest.json file
 dbt_manifest_path = (
