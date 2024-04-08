@@ -1,0 +1,16 @@
+version: 2
+sources:
+  - name: stream_data
+    database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
+    schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
+    tables:
+      - name: heart_rate_stream
+
+  - name: operational_data
+    database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
+    schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
+    tables:
+      - name: users
+      - name: activities
+
+
