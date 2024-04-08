@@ -1,0 +1,4 @@
+locations:
+- code_source:
+    package_name: orchestrate
+  location_name: orchestrate
