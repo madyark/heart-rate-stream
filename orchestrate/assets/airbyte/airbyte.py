@@ -1,4 +1,3 @@
-"""
 from dagster import EnvVar, AutoMaterializePolicy, FreshnessPolicy
 from dagster_airbyte import AirbyteResource, load_assets_from_airbyte_instance
 
@@ -15,4 +14,3 @@ airbyte_assets_streaming = load_assets_from_airbyte_instance(
     connection_to_freshness_policy_fn=lambda _: FreshnessPolicy(maximum_lag_minutes=60),
     connection_to_auto_materialize_policy_fn=lambda _: AutoMaterializePolicy.eager(),
 )
-"""
