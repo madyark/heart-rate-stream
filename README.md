@@ -1,7 +1,7 @@
 # Heart Rate Stream to Data Warehouse
 
 <p align="center">
-    <img src="docs/img/hr-gif.gif" alt="animated" />
+    <img src="docs/img/hr-gif.gif" alt="Heart Rate animation" />
 </p>
 
 ## Overview
@@ -11,6 +11,8 @@ This project implements a data pipeline for historical analysis of heart rate da
 The pipeline begins with the generation of synthetic heart rate data, which is streamed to a Kafka topic for real-time processing and sinked to a cloud data lake for persistant storage. 
 
 The data is then incrementally ingested into a data warehouse where it is transformed and stored in a final state tailored for efficient querying and analysis.
+
+<img src="docs/img/architecture-raw.png" alt="Raw architecture diagram" />
 
 The following research questions could be answered with the warehoused data:
 
