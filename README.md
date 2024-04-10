@@ -1,4 +1,4 @@
-# Heart Rate Stream ELT Pipeline: Generating Synthetic Data, Sinking to S3, and Loading into a Data Warehouse
+# Heart Rate Stream to Data Warehouse
 
 <p align="center">
     <img src="docs/img/hr-gif.gif" alt="animated" />
