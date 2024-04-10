@@ -1,7 +1,7 @@
 # Heart Rate Stream to Data Warehouse
 
 <p align="center">
-    <img src="docs/img/hr-gif.gif" alt="Heart Rate animation" />
+    <img src="docs/img/hr-gif.gif" alt="Heart rate animation" />
 </p>
 
 ## Overview
@@ -11,8 +11,6 @@ This project implements a data pipeline for historical analysis of heart rate da
 The pipeline begins with the generation of synthetic heart rate data, which is streamed to a Kafka topic for real-time processing and sinked to a cloud data lake for persistant storage. 
 
 The data is then incrementally ingested into a data warehouse where it is transformed and stored in a final state tailored for efficient querying and analysis.
-
-<img src="docs/img/architecture-raw.png" alt="Raw architecture diagram" />
 
 The following research questions could be answered with the warehoused data:
 
@@ -28,17 +26,36 @@ The following research questions could be answered with the warehoused data:
 
 ## Project Components:
 
-- Synthetic Data Generation: Synthetic heart rate data is generated to simulate real-world scenarios, such as heart rate data measured by an Apple Watch device. Additionally, synthetic operational data is generated (i.e. users data, activities data) that is stored in a mock operational OLTP database (running on PostgreSQL) hosted on an RDS instance.  
+<img src="docs/img/architecture.png" alt="Architecture diagram" />
 
-- Stream Data 
+### 1. Synthetic OLTP Data Generation 
 
-- Streaming to Kafka: The generated data is streamed to a Kafka topic, where real-time processing is applied before it is eventually written to a data lake for persitent storage.
+Synthetic operational data is generated (users data, activities data) that is stored in a mock operational OLTP database (running on PostgreSQL) hosted on an RDS instance.  
 
-- Sinking to S3: The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM/DD/HH directory format). This approach enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. 
+### 1. Simulated Heart Rate Stream
 
-- Data Ingestion with Airbyte: Airbyte is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
+ Synthetic heart rate data is generated to simulate real-world scenarios, such as heart rate data measured by an Apple Watch device. 
 
-- Transformation with dbt: Data transformation tasks are performed using dbt (Data Build Tool). The transformation tasks are broken down into different stages (staging, serving) and the data is broken into different models adopting a Kimball-style star schema design.
+### 1. Streaming to Kafka
 
-- Star Schema Modeling: This design optimizes query performance and facilitates intuitive analysis by organizing data into fact and dimension tables. Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). Certain dimension tables are implemented as Type 2 Slowly Changing Dimension (SCD) enabling historical tracking of dimensional data (e.g. difference in heart rate for when a user has recorded a change in weight). 
+The generated data is streamed to a Kafka topic, where real-time processing is applied before it is eventually written to a data lake for persitent storage.
+
+### 1. Sinking to S3
+
+The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM/DD/HH directory format). This approach enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. 
+
+### 1. Ingestion with Airbyte
+
+Airbyte is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
+
+### 1. Transformation with dbt
+
+Data transformation tasks are performed using dbt (Data Build Tool). The transformation tasks are broken down into different stages (staging, serving) and the data is broken into different models adopting a Kimball-style star schema design.
+
+### 1. Star Schema Modeling
+
+This design optimizes query performance and facilitates intuitive analysis by organizing data into fact and dimension tables. 
+
+- Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). 
+- Certain dimension tables are implemented as Type 2 Slowly Changing Dimension (SCD) enabling historical tracking of dimensional data (e.g. difference in heart rate for when a user has recorded a change in weight). 
 
