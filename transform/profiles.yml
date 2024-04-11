@@ -1,5 +1,5 @@
 snowflake_warehouse_profile:
-  target: dev
+  target: prod
   outputs:
     dev:
       type: snowflake
