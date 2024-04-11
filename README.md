@@ -72,15 +72,15 @@ To run a custom made script to generate JSON and AVRO files with mock heart rate
 
 Comparing the size of the generated files:  
 
-<img width="50%" src="docs/performance-analysis/stream/img/comparison.png" alt="Compare avro vs json bytes" />
-
-#### Next steps
-
-To enhance the `producer.py` script, consider modifying it to connect to the RDS-hosted PostgreSQL database using SQLAlchemy instead of reading data from CSV files. This approach can provide real-time access to the most up-to-date user and activity data stored in the database, improving the accuracy and timeliness of the generated heart rate stream.
+<img src="docs/performance-analysis/stream/img/comparison.png" alt="Compare avro vs json bytes" />
 
 ### 3. Streaming to Kafka
 
-The generated data is streamed to a Kafka topic, where real-time processing is applied before it is eventually written to a data lake for persitent storage.
+A Kafka cluster and topic were established for real-time data ingestion inside of Confluent Cloud. The topic was divided into 6 partitions, enabling Kafka to parallelize the stream processing and allow for scalability (not truly necessary as data was written synchronously inside the `producer.py` script). The default value of '1 Week' was selected as the retention period for each message. 
+
+Confluent Cloud's connectors facilitated the setup of an S3 sink connector for efficient data transfer to an S3 bucket. An IAM role was configured to grant Confluent the necessary permissions to write data to the S3 bucket. 
+
+<img src="docs/img/kafka-lineage.png" />
 
 ### 4. Sinking to S3
 
@@ -101,3 +101,15 @@ This design optimizes query performance and facilitates intuitive analysis by or
 - Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). 
 - Certain dimension tables are implemented as Type 2 Slowly Changing Dimension (SCD) enabling historical tracking of dimensional data (e.g. difference in heart rate for when a user has recorded a change in weight). 
 
+
+## Implementation
+
+## Screenshots
+
+<img src="docs/img/kafka-topic-messages.png" alt="Kafka topic when stream is running" />
+
+<img src="docs/img/kafka-cluster-metrics.png" alt="Kafka cluster metrics" />
+
+## Limitations and Next Steps
+
+To enhance the `producer.py` script, consider modifying it to connect to the RDS-hosted PostgreSQL database using SQLAlchemy instead of reading data from CSV files. This approach can provide real-time access to the most up-to-date user and activity data stored in the database, improving the accuracy and timeliness of the generated heart rate stream.
