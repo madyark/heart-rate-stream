@@ -30,29 +30,71 @@ The following research questions could be answered with the warehoused data:
 
 ### 1. Synthetic OLTP Data Generation 
 
-Synthetic operational data is generated (users data, activities data) that is stored in a mock operational OLTP database (running on PostgreSQL) hosted on an RDS instance.  
+Synthetic operational data is generated (users data, activities data) that will be used to provide further context to each heart rate stream record. 
 
-### 1. Simulated Heart Rate Stream
+The users and activities data were generated using the Faker library inside custom python scripts that can be adjusted and re-used when needed. Each script generates a pandas DataFrame object and uploads the object as a static CSV file. The CSV data is then manually uploaded to a mock operational OLTP database (running on PostgreSQL) hosted on an RDS instance. 
 
- Synthetic heart rate data is generated to simulate real-world scenarios, such as heart rate data measured by an Apple Watch device. 
+Further information with regards to the synthetic OLTP data may be found inside the `mock-data/static` directory.
 
-### 1. Streaming to Kafka
+To run the python scripts and re-create the CSV files:
+
+`python -m mock-data.static.scripts.generate-activities`
+
+`python -m mock-data.static.scripts.generate-users`
+
+### 2. Simulated Heart Rate Stream
+
+Synthetic heart rate data is generated to simulate real-world scenarios, such as heart rate data measured by an Apple Watch device. 
+
+A `producer.py` script has been developed to act as a Kafka producer, leveraging the `confluent-kafka` Python library to generate the heart rate data. This script reads the already generated users and activities CSV files to pick out a random activity ID and user ID, sending it along with a randomly-generated heart rate to the Kafka topic.
+
+The Faker library is also used to generate a random latitude and longitude coordinates based on the user's address country. This as well as a timestamp column (indicating the event time) are added to the heart rate data record and sent as a JSON object to the Kafka topic for processing. 
+
+Heart rate data format: 
+
+```
+{
+ user_id: 10001, 
+ heart_rate: 128, 
+ timestamp: 1711943972, 
+ meta: {
+  activity_id: 20890,
+  location: {latitude: 37.416834, longitude: -121.975002}
+ }
+}
+```
+
+Both JSON and AVRO formats were considered for sending heart rate records, however JSON was chosen for its simplicity and cost-effectiveness. While AVRO offers schema evolution and binary encoding, JSON ended up incurring lower storage costs compared to AVRO for transmitting heart rate data over the network.
+
+To run a custom made script to generate JSON and AVRO files with mock heart rate data:  
+
+`python -m docs.performance-analysis.stream.compare-avro-json`
+
+Comparing the size of the generated files:  
+
+<img width="50%" src="docs/performance-analysis/stream/img/comparison.png" alt="Compare avro vs json bytes" />
+
+#### Next steps
+
+To enhance the `producer.py` script, consider modifying it to connect to the RDS-hosted PostgreSQL database using SQLAlchemy instead of reading data from CSV files. This approach can provide real-time access to the most up-to-date user and activity data stored in the database, improving the accuracy and timeliness of the generated heart rate stream.
+
+### 3. Streaming to Kafka
 
 The generated data is streamed to a Kafka topic, where real-time processing is applied before it is eventually written to a data lake for persitent storage.
 
-### 1. Sinking to S3
+### 4. Sinking to S3
 
 The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM/DD/HH directory format). This approach enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. 
 
-### 1. Ingestion with Airbyte
+### 5. Ingestion with Airbyte
 
 Airbyte is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
 
-### 1. Transformation with dbt
+### 6. Transformation with dbt
 
 Data transformation tasks are performed using dbt (Data Build Tool). The transformation tasks are broken down into different stages (staging, serving) and the data is broken into different models adopting a Kimball-style star schema design.
 
-### 1. Star Schema Modeling
+### 7. Star Schema Modeling
 
 This design optimizes query performance and facilitates intuitive analysis by organizing data into fact and dimension tables. 
 
