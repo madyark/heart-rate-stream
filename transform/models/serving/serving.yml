@@ -1,10 +1,18 @@
 version: 2
 
 models:
+  - name: dim_users
+    columns:
+      - name: users_key
+        description: Surrogate key of the users dimension table.
+        tests:
+          - unique
+          - not_null
+
   - name: dim_activities
     columns:
       - name: activity_key
-        description: Surrogate key of the activity row.
+        description: Surrogate key of the activities dimension table.
         tests:
           - unique
           - not_null
