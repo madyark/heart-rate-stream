@@ -5,8 +5,142 @@ sources:
     schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
     tables:
       - name: heart_rate_stream
+        description: Heart rate records loaded from S3 bucket
+        tests:
+            - airbyte_meta_no_errors
+            - dbt_expectations.expect_table_columns_to_match_set:
+                column_list: ["_airbyte_raw_id", "_airbyte_extracted_at", "_ab_source_file_url", "_ab_source_file_last_modified", "_airbyte_meta", "meta", "user_id", "timestamp", "heart_rate"]
+        
+        columns:
+          - name: _airbyte_raw_id
+            description: Unique identifier for each raw heart rate data record provided by Airbyte
+            tests:
+              - unique
+              - not_null 
+          - name: _airbyte_extracted_at
+            description: Timestamp indicating when the heart rate data was extracted by Airbyte
+          - name: _airbyte_meta
+            description: Metadata provided by Airbyte (should be empty)
+          - name: _ab_source_file_url
+            description: URL path of file from S3 bucket where heart rate record was extracted from (should follow a standard pattern).
+            tests:
+              - dbt_expectations.expect_column_values_to_match_like_pattern:
+                  like_pattern: "topics/hr-data-topic/year=%/month=%/day=%/hour=%/hr-data-topic+_+%.json"
+          - name: _ab_source_file_last_modified
+            description: Timestamp indicating the last modification of the S3 bucket source file 
+          - name: meta
+            description: Additional metadata related to the heart rate measurement
+          - name: user_id
+            description: Unique identifier for each user
+          - name: timestamp
+            description: Event time of the heart rate measurement
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  # Event time should be between 1 April 2024 and 31 December 2099
+                  min_value: 1711929600
+                  max_value: 1767229200
+          - name: heart_rate
+            description: Heart rate values from stream
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 5  
+                  max_value: 300
+      
       - name: users
+        description: Users data extracted from OLTP system
+        tests:
+            - airbyte_meta_no_errors
+        
+        columns:
+          - name: _airbyte_raw_id
+            description: Unique identifier for each raw user data record provided by Airbyte
+            tests:
+              - unique
+              - not_null 
+          - name: _airbyte_extracted_at
+            description: Timestamp indicating when the user data was extracted by Airbyte
+          - name: _airbyte_meta
+            description: Metadata provided by Airbyte (should be empty)
+          - name: _ab_cdc_lsn
+            description: Log sequence number provided by Airbyte CDC 
+          - name: _ab_cdc_deleted_at
+            description: Timestamp indicating when the user record was deleted (if applicable)
+          - name: _ab_cdc_updated_at
+            description: Timestamp indicating when the user record was last updated by Airbyte CDC
+          - name: sex
+            description: User sex 
+          - name: race
+            description: User race 
+            tests:
+              - accepted_values:
+                  values: ['W', "H", "B", "A", "O"]
+          - name: height
+            description: User height 
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 100  
+                  max_value: 300
+          - name: weight
+            description: User weight 
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 30  
+                  max_value: 500
+          - name: address
+            description: User address
+          - name: user_id
+            description: Unique identifier for each user
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  # Standard identifier values range chosen when designing database
+                  min_value: 10001  
+                  max_value: 19999
+          - name: first_name
+            description: User first name 
+          - name: last_name
+            description: User last name 
+          - name: blood_type
+            description: User blood type 
+            tests:
+              - accepted_values:
+                  values: ['A+', "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+          - name: date_of_birth
+            description: Date of birth 
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 19000101  
+                  max_value: 20991231
+                  row_condition: "date_of_birth>0" # to eliminate airbyte deleted_at rows with 0 as the default value for column
+                  strictly: true
+          - name: origin_country_code
+            description: Two letter code (Alpha-2) of the country of origin for the user
+            tests:
+              - relationships:
+                  to: ref('country_codes')
+                  field: alpha2
+          - name: origin_country_name
+            description: Name of the country of origin for the user
+            tests:
+              - relationships:
+                  to: ref('country_codes')
+                  field: name
+          - name: address_country_code
+            description: Two letter code (Alpha-2) of the country where the user lives
+            tests:
+              - relationships:
+                  to: ref('country_codes')
+                  field: alpha2
+          - name: address_country_name
+            description: Name of the country where the user lives
+            tests:
+              - relationships:
+                  to: ref('country_codes')
+                  field: name
+          - name: last_update
+            description: Timestamp indicating the last update for the user data
+        
+      
       - name: activities
-
-
+        tests:
+            - airbyte_meta_no_errors
 
