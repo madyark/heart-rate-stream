@@ -1,28 +1,90 @@
 version: 2
 
 models:
-  - name: stg_activities
-    columns:
-      - name: activity_id
-        description: Composite key to uniquely identify the activity in the operational system.
-        tests:
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 20000  
-              max_value: 20999
-
   - name: stg_heart_rates
+    description: Staging table for heart rate data
     columns:
-      - name: heart_rate
-        description: Heart rate values from stream.
+      - name: user_id
+        description: Business key to uniquely identify the user in the operational system
         tests:
-          - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 5  
-              max_value: 300
+          - not_null
+      - name: timestamp
+        description: Event time of the heart rate measurement
+        tests:
+          - not_null
+      - name: heart_rate
+        description: Heart rate value in beats per minute (BPM)
+        tests:
+          - not_null
+      - name: activity_id
+        description: Business key to uniquely identify the activity in the operational system
+        tests:
+          - not_null
+      - name: latitude
+        description: Latitude of the heart rate measurement location
+      - name: longitude
+        description: Longitude of the heart rate measurement location
+      - name: extracted_at
+        description: Timestamp indicating when the data was extracted
+        tests:
+          - not_null
 
   - name: stg_users
+    description: Staging table for users data
     columns:
-      - name: blood_type
-        description: Blood type of each user.
+      - name: user_id
+        description: Business key to uniquely identify the user in the operational system
         tests:
-          - accepted_values:
-              values: ['A+', "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+          - not_null 
+      - name: first_name
+        description: User first name 
+      - name: last_name
+        description: User last name 
+      - name: date_of_birth
+        description: User date of birth
+      - name: sex
+        description: User sex 
+      - name: height
+        description: User height 
+      - name: weight
+        description: User weight 
+      - name: blood_type
+        description: User blood type 
+      - name: race
+        description: User race 
+      - name: origin_country_code
+        description: Two letter code (Alpha-2) of the country of origin for the user
+      - name: origin_country_name
+        description: Name of the country of origin for the user
+      - name: address
+        description: User address 
+      - name: address_country_code
+        description: Two letter code (Alpha-2) of the country where the user lives
+      - name: address_country_name
+        description: Name of the country where the user lives
+      - name: last_update
+        description: Timestamp indicating the last update for the user data
+      - name: deleted_at
+        description: Timestamp indicating when the user record was deleted (if applicable)
+      - name: extracted_at
+        description: Timestamp indicating when the data was extracted
+        tests:
+          - not_null
+  
+  - name: stg_activities
+    description: Staging table for activities data
+    columns:
+      - name: activity_id
+        description: Business key to uniquely identify the activity in the operational system
+        tests:
+          - not_null
+      - name: activity_name
+        description: Name of the activity
+      - name: last_update
+        description: Timestamp indicating the last update of the activity data
+      - name: deleted_at
+        description: Timestamp indicating when the activity record was deleted (if applicable)
+      - name: extracted_at
+        description: Timestamp indicating when the data was extracted
+        tests:
+          - not_null

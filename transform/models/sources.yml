@@ -1,4 +1,5 @@
 version: 2
+
 sources:
   - name: stream_data
     database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
@@ -46,7 +47,7 @@ sources:
                   min_value: 1711929600
                   max_value: 1767229200
           - name: heart_rate
-            description: Heart rate values from stream
+            description: Heart rate value in beats per minute (BPM)
             tests:
               - not_null
               - dbt_expectations.expect_column_values_to_be_between:
@@ -116,7 +117,7 @@ sources:
               - accepted_values:
                   values: ['A+', "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
           - name: date_of_birth
-            description: Date of birth 
+            description: User date of birth 
             tests:
               - dbt_expectations.expect_column_values_to_be_between:
                   min_value: 19000101  
