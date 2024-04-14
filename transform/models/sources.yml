@@ -45,7 +45,7 @@ sources:
             tests:
               - not_null
               - dbt_expectations.expect_column_values_to_be_between:
-                  # Event time should be between 1 April 2024 and 31 December 2099
+                  # Event time should be between 1 April 2024 and 31 December 2025
                   min_value: 1711929600
                   max_value: 1767229200
           - name: heart_rate

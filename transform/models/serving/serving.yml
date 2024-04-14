@@ -3,8 +3,8 @@ version: 2
 models:
   - name: dim_users
     columns:
-      - name: users_key
-        description: Surrogate key of the users dimension table.
+      - name: user_key
+        description: Surrogate key of the users dimension table
         tests:
           - unique
           - not_null
@@ -12,12 +12,12 @@ models:
   - name: dim_activities
     columns:
       - name: activity_key
-        description: Surrogate key of the activities dimension table.
+        description: Surrogate key of the activities dimension table
         tests:
           - unique
           - not_null
       - name: start_date
-        description: Date from which record row is effective.
+        description: Date from which record row is effective
         tests:
           - dbt_expectations.expect_column_values_to_be_increasing:
               sort_column: start_date 
@@ -30,3 +30,42 @@ models:
           date_part: day
           test_start_date: '1900-01-01'
           test_end_date: '2099-12-31' 
+  
+  - name: dim_times
+    description: Dimension table for times data (grain in seconds)
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal:
+          value: 86400 
+    columns:
+      - name: hh_mm_ss
+        description: Time in the format HH:MM:SS
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d:\d\d:\d\d'
+              is_raw: True #  the regex pattern is a "raw" string and should be escaped
+      - name: hour
+        description: Hour component of the time
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 23
+      - name: minute
+        description: Minute component of the time
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 59
+      - name: second
+        description: Second component of the time
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 59
+      - name: time_of_day
+        description: Time of day classifier (Morning, Afternoon, Evening, Night)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Morning", "Afternoon", "Evening", "Night"]
