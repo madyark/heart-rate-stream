@@ -8,9 +8,10 @@ sources:
         description: Heart rate records loaded from S3 bucket
         tests:
             - airbyte_meta_no_errors
+            - unique:
+                column_name: "(user_id || '-' || timestamp)"
             - dbt_expectations.expect_table_columns_to_match_set:
-                column_list: ["_airbyte_raw_id", "_airbyte_extracted_at", "_ab_source_file_url", "_ab_source_file_last_modified", "_airbyte_meta", "meta", "user_id", "timestamp", "heart_rate"]
-        
+                column_list: ["_airbyte_raw_id", "_airbyte_extracted_at", "_ab_source_file_url", "_ab_source_file_last_modified", "_airbyte_meta", "meta", "user_id", "timestamp", "heart_rate"]    
         columns:
           - name: _airbyte_raw_id
             description: Unique identifier for each raw heart rate data record provided by Airbyte
@@ -30,11 +31,16 @@ sources:
             description: Timestamp indicating the last modification of the S3 bucket source file 
           - name: meta
             description: Additional metadata related to the heart rate measurement
+            tests:
+              - not_null 
           - name: user_id
             description: Unique identifier for each user
+            tests:
+              - not_null 
           - name: timestamp
             description: Event time of the heart rate measurement
             tests:
+              - not_null
               - dbt_expectations.expect_column_values_to_be_between:
                   # Event time should be between 1 April 2024 and 31 December 2099
                   min_value: 1711929600
@@ -42,6 +48,7 @@ sources:
           - name: heart_rate
             description: Heart rate values from stream
             tests:
+              - not_null
               - dbt_expectations.expect_column_values_to_be_between:
                   min_value: 5  
                   max_value: 300
@@ -50,7 +57,10 @@ sources:
         description: Users data extracted from OLTP system
         tests:
             - airbyte_meta_no_errors
-        
+            - unique:
+                column_name: "(user_id || '-' || _ab_cdc_updated_at)"
+            - dbt_expectations.expect_table_columns_to_match_set:
+                column_list: ["_airbyte_raw_id", "_airbyte_extracted_at", "_airbyte_meta", "_ab_cdc_lsn", "_ab_cdc_deleted_at", "_ab_cdc_updated_at", "sex", "race", "height", "weight", "address", "user_id", "last_name", "blood_type", "first_name", "last_update", "date_of_birth", "origin_country_code", "origin_country_name", "address_country_code", "address_country_name"] 
         columns:
           - name: _airbyte_raw_id
             description: Unique identifier for each raw user data record provided by Airbyte
@@ -91,8 +101,9 @@ sources:
           - name: user_id
             description: Unique identifier for each user
             tests:
+              - not_null 
               - dbt_expectations.expect_column_values_to_be_between:
-                  # Standard identifier values range chosen when designing database
+                  # Standard identifier values range chosen when designing OLTP database
                   min_value: 10001  
                   max_value: 19999
           - name: first_name
@@ -139,8 +150,40 @@ sources:
           - name: last_update
             description: Timestamp indicating the last update for the user data
         
-      
       - name: activities
+        description: Activity names extracted from OLTP system
         tests:
             - airbyte_meta_no_errors
-
+            - unique:
+                column_name: "(activity_id || '-' || _ab_cdc_updated_at)"
+            - dbt_expectations.expect_table_columns_to_match_set:
+                column_list: ["_airbyte_raw_id", "_airbyte_extracted_at", "_airbyte_meta", "_ab_cdc_lsn", "_ab_cdc_deleted_at", "_ab_cdc_updated_at", "activity_id",  "activity_name", "last_update"]
+        columns:
+          - name: _airbyte_raw_id
+            description: Unique identifier for each raw activity data record provided by Airbyte
+            tests:
+              - unique
+              - not_null 
+          - name: _airbyte_extracted_at
+            description: Timestamp indicating when the activity data was extracted by Airbyte
+          - name: _airbyte_meta
+            description: Metadata provided by Airbyte (should be empty)
+          - name: _ab_cdc_lsn
+            description: Log sequence number provided by Airbyte CDC 
+          - name: _ab_cdc_deleted_at
+            description: Timestamp indicating when the activity record was deleted (if applicable)
+          - name: _ab_cdc_updated_at
+            description: Timestamp indicating when the activity record was last updated by Airbyte CDC
+          - name: activity_id
+            description: Unique identifier for each activity
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  # Standard identifier values range chosen when designing OLTP database
+                  min_value: 20000   
+                  max_value: 20999
+          - name: activity_name
+            description: Name of the activity
+          - name: last_update
+            description: Timestamp indicating the last update of the activity data
+          
