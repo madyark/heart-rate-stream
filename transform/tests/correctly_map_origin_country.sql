@@ -1,3 +1,5 @@
+-- Assert the the origin_country_code field in each user record maps to the correct origin_country_name
+
 select u.origin_country_code,
        u.origin_country_name,
        c.name as correct_country_name
