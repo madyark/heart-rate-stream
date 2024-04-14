@@ -26,8 +26,6 @@ models:
         description: Longitude of the heart rate measurement location
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
-        tests:
-          - not_null
 
   - name: stg_users
     description: Staging table for users data
@@ -68,8 +66,6 @@ models:
         description: Timestamp indicating when the user record was deleted (if applicable)
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
-        tests:
-          - not_null
   
   - name: stg_activities
     description: Staging table for activities data
@@ -86,5 +82,3 @@ models:
         description: Timestamp indicating when the activity record was deleted (if applicable)
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
-        tests:
-          - not_null

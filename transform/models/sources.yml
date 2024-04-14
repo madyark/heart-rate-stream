@@ -21,6 +21,8 @@ sources:
               - not_null 
           - name: _airbyte_extracted_at
             description: Timestamp indicating when the heart rate data was extracted by Airbyte
+            tests:
+              - not_null 
           - name: _airbyte_meta
             description: Metadata provided by Airbyte (should be empty)
           - name: _ab_source_file_url
@@ -70,6 +72,8 @@ sources:
               - not_null 
           - name: _airbyte_extracted_at
             description: Timestamp indicating when the user data was extracted by Airbyte
+            tests:
+              - not_null 
           - name: _airbyte_meta
             description: Metadata provided by Airbyte (should be empty)
           - name: _ab_cdc_lsn
@@ -167,6 +171,8 @@ sources:
               - not_null 
           - name: _airbyte_extracted_at
             description: Timestamp indicating when the activity data was extracted by Airbyte
+            tests:
+              - not_null 
           - name: _airbyte_meta
             description: Metadata provided by Airbyte (should be empty)
           - name: _ab_cdc_lsn
