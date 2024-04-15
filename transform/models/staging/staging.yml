@@ -22,8 +22,16 @@ models:
           - not_null
       - name: latitude
         description: Latitude of the heart rate measurement location
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -90
+              max_value: 90
       - name: longitude
         description: Longitude of the heart rate measurement location
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -180
+              max_value: 180
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
 
