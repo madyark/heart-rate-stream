@@ -24,18 +24,293 @@ models:
               group_by: [activity_id]
 
   - name: dim_dates
+    description: Dimension table for dates data (grain in days)
     tests:
       - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
           date_col: date_day
           date_part: day
           test_start_date: '1900-01-01'
           test_end_date: '2099-12-31' 
+      - dbt_expectations.expect_table_row_count_to_equal:
+          value: 73049
+      - dbt_expectations.expect_table_columns_to_contain_set:
+          column_list: ["date_day", "day_of_week", "day_of_week_name", "day_of_month", "day_of_year", "week_of_year", "month_of_year", "month_name", "year_number"]
+    columns:
+      - name: date_day
+        description: Date of the day
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True #  the regex pattern is a "raw" string and should be escaped
+      - name: prior_date_day
+        description: Prior date of the day
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+          - date_difference_consistent:
+              date_part: day
+              difference_value: -1
+              base_date_column: date_day
+      - name: next_date_day
+        description: Next date of the day
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+          - date_difference_consistent:
+              date_part: day
+              difference_value: 1
+              base_date_column: date_day
+      - name: prior_year_date_day
+        description: Prior year date of the day
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+          - date_difference_consistent:
+              date_part: year
+              difference_value: -1
+              base_date_column: date_day
+      - name: prior_year_over_year_date_day
+        description: Prior year over year date of the day
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: day_of_week
+        description: Day of the week (Sunday=1, Monday=2, ..., Saturday=7)
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 7
+      - name: day_of_week_iso
+        description: ISO day of the week (Monday=1, Tuesday=2, ..., Sunday=7)
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 7
+      - name: day_of_week_name
+        description: Name of the day of the week (Sunday, Monday, ..., Saturday)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+      - name: day_of_week_name_short
+        description: Short name of the day of the week (Sun, Mon, ..., Sat)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      - name: day_of_month
+        description: Day of the month
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 31
+      - name: day_of_year
+        description: Day of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 366
+      - name: week_start_date
+        description: Start date of the week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: week_end_date
+        description: End date of the week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: prior_year_week_start_date
+        description: Prior year start date of the week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: prior_year_week_end_date
+        description: Prior year end date of the week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: week_of_year
+        description: Week of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 53
+      - name: iso_week_start_date
+        description: Start date of the ISO week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: iso_week_end_date
+        description: End date of the ISO week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: prior_year_iso_week_start_date
+        description: Prior year start date of the ISO week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: prior_year_iso_week_end_date
+        description: Prior year end date of the ISO week
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: iso_week_of_year
+        description: ISO week of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 53
+      - name: prior_year_week_of_year
+        description: Prior year week of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 53
+      - name: prior_year_iso_week_of_year
+        description: Prior year ISO week of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 53
+      - name: month_of_year
+        description: Month of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 12
+      - name: month_name
+        description: Name of the month
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+      - name: month_name_short
+        description: Short name of the month
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+      - name: month_start_date
+        description: Start date of the month
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-01'
+              is_raw: True 
+      - name: month_end_date
+        description: End date of the month
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: prior_year_month_start_date
+        description: Prior year start date of the month
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-01'
+              is_raw: True 
+          - date_difference_consistent:
+              date_part: year
+              difference_value: -1
+              base_date_column: month_start_date
+      - name: prior_year_month_end_date
+        description: Prior year end date of the month
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: quarter_of_year
+        description: Quarter of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 4
+      - name: quarter_start_date
+        description: Start date of the quarter
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-01'
+              is_raw: True 
+      - name: quarter_end_date
+        description: End date of the quarter
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-\d\d-\d\d'
+              is_raw: True 
+      - name: year_number
+        description: Year number
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1900
+              max_value: 2099
+      - name: year_start_date
+        description: Start date of the year
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-01-01'
+              is_raw: True 
+      - name: year_end_date
+        description: End date of the year 
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '\d\d\d\d-12-31'
+              is_raw: True 
   
   - name: dim_times
     description: Dimension table for times data (grain in seconds)
     tests:
       - dbt_expectations.expect_table_row_count_to_equal:
           value: 86400 
+      - dbt_expectations.expect_table_columns_to_match_set:
+          column_list: ["hh_mm_ss", "hour", "minute", "second", "time_of_day"]
     columns:
       - name: hh_mm_ss
         description: Time in the format HH:MM:SS
@@ -44,7 +319,7 @@ models:
           - unique
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: '\d\d:\d\d:\d\d'
-              is_raw: True #  the regex pattern is a "raw" string and should be escaped
+              is_raw: True 
       - name: hour
         description: Hour component of the time
         tests:
