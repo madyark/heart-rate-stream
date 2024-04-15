@@ -6,13 +6,13 @@
 }}
 
 select 
-    user_id,
+    user_id::string as user_id,
     timestamp::string as timestamp,
-    heart_rate,
+    heart_rate::int as heart_rate,
     meta:activity_id::string as activity_id,
     meta:location:latitude::string as latitude,
     meta:location:longitude::string as longitude,
-    _airbyte_extracted_at as extracted_at
+    _airbyte_extracted_at::timestamp_ntz as extracted_at
 
 from 
     {{ source('stream_data', 'heart_rate_stream') }} 

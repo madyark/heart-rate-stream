@@ -6,11 +6,11 @@
 }}
 
 select
-    activity_id,
-    activity_name,
-    last_update,
-    _ab_cdc_deleted_at as deleted_at,
-    _airbyte_extracted_at as extracted_at
+    activity_id::string as activity_id,
+    activity_name::string as activity_name,
+    last_update::timestamp_ntz as last_update,
+    _ab_cdc_deleted_at::timestamp_ntz as deleted_at,
+    _airbyte_extracted_at::timestamp_ntz as extracted_at
 
 from 
     {{ source('stream_data', 'activities') }} 
