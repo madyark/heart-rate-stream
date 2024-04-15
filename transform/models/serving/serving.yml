@@ -1,118 +1,6 @@
 version: 2
 
 models:
-  - name: dim_users
-    description: Type 2 Slowly-Changing Dimension table for users data
-    tests:
-      - correct_scd_start_end_dates:
-          id_column: user_id
-          start_date_column: start_date
-          end_date_column: end_date
-      - dbt_expectations.expect_table_columns_to_match_set:
-          column_list: ["user_key", "user_id", "first_name", "last_name", "date_of_birth", "sex", "height", "weight", "blood_type", "race", "origin_country", "address", "address_country", "start_date", "end_date"]
-      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
-          column_A: end_date
-          column_B: start_date
-          or_equal: False
-    columns:
-      - name: user_key
-        description: Surrogate key of the users dimension table
-        tests:
-          - unique
-          - not_null
-      - name: user_id
-        description: Business key to uniquely identify the user in the operational system
-        tests:
-          - not_null 
-      - name: first_name
-        description: User first name 
-        tests:
-          - not_null 
-      - name: last_name
-        description: User last name 
-        tests:
-          - not_null 
-      - name: date_of_birth
-        description: User date of birth
-        tests:
-          - not_null 
-      - name: sex
-        description: User sex 
-      - name: height
-        description: User height 
-      - name: weight
-        description: User weight 
-      - name: blood_type
-        description: User blood type 
-      - name: race
-        description: User race 
-      - name: origin_country
-        description: Name of the country of origin for the user
-      - name: address
-        description: User address 
-        tests:
-          - not_null 
-      - name: address_country
-        description: Name of the country where the user lives
-        tests:
-          - not_null 
-      - name: start_date
-        description: Date from which record row is effective
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_be_increasing:
-              sort_column: start_date 
-              group_by: [user_id]
-      - name: end_date
-        description: Date until which record row is effective
-        tests:
-          - dbt_expectations.expect_column_values_to_be_increasing:
-              sort_column: end_date 
-              group_by: [user_id]
-              row_condition: "end_date is not null" 
-
-  - name: dim_activities
-    description: Type 2 Slowly-Changing Dimension table for activity names data
-    tests:
-      - correct_scd_start_end_dates:
-          id_column: activity_id
-          start_date_column: start_date
-          end_date_column: end_date
-      - dbt_expectations.expect_table_columns_to_match_set:
-          column_list: ["activity_key", "activity_id", "activity_name", "start_date", "end_date"]
-      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
-          column_A: end_date
-          column_B: start_date
-          or_equal: False
-    columns:
-      - name: activity_key
-        description: Surrogate key of the activities dimension table
-        tests:
-          - unique
-          - not_null
-      - name: activity_id
-        description: Business key to uniquely identify the activity in the operational system
-        tests:
-          - not_null
-      - name: activity_name
-        description: Name of the activity
-        tests:
-          - not_null
-      - name: start_date
-        description: Date from which record row is effective
-        tests:
-          - not_null
-          - dbt_expectations.expect_column_values_to_be_increasing:
-              sort_column: start_date 
-              group_by: [activity_id]
-      - name: end_date
-        description: Date until which record row is effective
-        tests:
-          - dbt_expectations.expect_column_values_to_be_increasing:
-              sort_column: end_date 
-              group_by: [activity_id]
-              row_condition: "end_date is not null" 
-
   - name: dim_dates
     description: Dimension table for dates data (grain in days)
     tests:
@@ -474,3 +362,173 @@ models:
           - not_null
           - accepted_values:
               values: ["Morning", "Afternoon", "Evening", "Night"]
+
+  - name: dim_users
+    description: Type 2 Slowly-Changing Dimension table for users data
+    tests:
+      - correct_scd_start_end_dates:
+          id_column: user_id
+          start_date_column: start_date
+          end_date_column: end_date
+      - dbt_expectations.expect_table_columns_to_match_set:
+          column_list: ["user_key", "user_id", "first_name", "last_name", "date_of_birth", "sex", "height", "weight", "blood_type", "race", "origin_country", "address", "address_country", "start_date", "end_date"]
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: end_date
+          column_B: start_date
+          or_equal: False
+    columns:
+      - name: user_key
+        description: Surrogate key of the users dimension table
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Business key to uniquely identify the user in the operational system
+        tests:
+          - not_null 
+      - name: first_name
+        description: User first name 
+        tests:
+          - not_null 
+      - name: last_name
+        description: User last name 
+        tests:
+          - not_null 
+      - name: date_of_birth
+        description: User date of birth
+        tests:
+          - not_null 
+      - name: sex
+        description: User sex 
+      - name: height
+        description: User height 
+      - name: weight
+        description: User weight 
+      - name: blood_type
+        description: User blood type 
+      - name: race
+        description: User race 
+      - name: origin_country
+        description: Name of the country of origin for the user
+      - name: address
+        description: User address 
+        tests:
+          - not_null 
+      - name: address_country
+        description: Name of the country where the user lives
+        tests:
+          - not_null 
+      - name: start_date
+        description: Date from which record row is effective
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_increasing:
+              sort_column: start_date 
+              group_by: [user_id]
+      - name: end_date
+        description: Date until which record row is effective
+        tests:
+          - dbt_expectations.expect_column_values_to_be_increasing:
+              sort_column: end_date 
+              group_by: [user_id]
+              row_condition: "end_date is not null" 
+
+  - name: dim_activities
+    description: Type 2 Slowly-Changing Dimension table for activity names data
+    tests:
+      - correct_scd_start_end_dates:
+          id_column: activity_id
+          start_date_column: start_date
+          end_date_column: end_date
+      - dbt_expectations.expect_table_columns_to_match_set:
+          column_list: ["activity_key", "activity_id", "activity_name", "start_date", "end_date"]
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: end_date
+          column_B: start_date
+          or_equal: False
+    columns:
+      - name: activity_key
+        description: Surrogate key of the activities dimension table
+        tests:
+          - unique
+          - not_null
+      - name: activity_id
+        description: Business key to uniquely identify the activity in the operational system
+        tests:
+          - not_null
+      - name: activity_name
+        description: Name of the activity
+        tests:
+          - not_null
+      - name: start_date
+        description: Date from which record row is effective
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_increasing:
+              sort_column: start_date 
+              group_by: [activity_id]
+      - name: end_date
+        description: Date until which record row is effective
+        tests:
+          - dbt_expectations.expect_column_values_to_be_increasing:
+              sort_column: end_date 
+              group_by: [activity_id]
+              row_condition: "end_date is not null" 
+  
+  - name: fct_heart_rates
+    description: Transaction fact table for heart rate data
+    tests:
+      - unique:
+          column_name: "(user_key || '-' || activity_key || '-' || event_datetime)"
+      - dbt_expectations.expect_table_columns_to_match_set:
+          column_list: ["user_key", "activity_key", "event_date", "event_time", "event_datetime", "heart_rate", "previous_heart_rate", "max_heart_rate", "min_heart_rate", "avg_heart_rate", "latitude", "longitude"]
+    columns:
+      - name: user_key
+        description: Unique surrogate key for the user
+        tests:
+          - not_null 
+          - relationships:
+              to: ref('dim_users')
+              field: user_key
+      - name: activity_key
+        description: Unique surrogate key for the activity name
+        tests:
+          - not_null 
+          - relationships:
+              to: ref('dim_activities')
+              field: activity_key
+      - name: event_date
+        description: Calendar date of the event
+        tests:
+          - not_null 
+          - relationships:
+              to: ref('dim_dates')
+              field: date_day
+      - name: event_time
+        description: Time of the event
+        tests:
+          - not_null 
+          - relationships:
+              to: ref('dim_times')
+              field: hh_mm_ss
+      - name: event_datetime
+        description: Datetime of the event
+        tests:
+          - not_null 
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '[0-9]{4}-[0-9]{2}-[0-9]{2}\s\d\d:\d\d:\d\d\.\d\d\d'
+              is_raw: True 
+      - name: heart_rate
+        description: Heart rate recorded during the event
+      - name: previous_heart_rate
+        description: Previous heart rate recorded for the user during the given exercise
+      - name: max_heart_rate
+        description: Maximum heart rate recorded for the user during the given exercise
+      - name: min_heart_rate
+        description: Minimum heart rate recorded for the user during the given exercise
+      - name: avg_heart_rate
+        description: Average heart rate recorded for the user during the given exercise
+      - name: latitude
+        description: Latitude of the event location
+      - name: longitude
+        description: Longitude of the event location
