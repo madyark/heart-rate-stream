@@ -35,6 +35,46 @@ models:
           value: 73049
       - dbt_expectations.expect_table_columns_to_contain_set:
           column_list: ["date_day", "day_of_week", "day_of_week_name", "day_of_month", "day_of_year", "week_of_year", "month_of_year", "month_name", "year_number"]
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: week_end_date
+          column_B: week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: prior_year_week_end_date
+          column_B: prior_year_week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: week_start_date
+          column_B: prior_year_week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: iso_week_end_date
+          column_B: iso_week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: prior_year_iso_week_end_date
+          column_B: prior_year_iso_week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: iso_week_start_date
+          column_B: prior_year_iso_week_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: month_end_date
+          column_B: month_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: prior_year_month_end_date
+          column_B: prior_year_month_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: quarter_end_date
+          column_B: quarter_start_date
+          or_equal: false
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: year_end_date
+          column_B: year_start_date
+          or_equal: false
     columns:
       - name: date_day
         description: Date of the day

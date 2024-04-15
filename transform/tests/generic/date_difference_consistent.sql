@@ -1,4 +1,4 @@
--- Test if the date in the column is the correct derived calculation from a base date column (potential for errors when dealing with leap year dates)
+-- Assert the date in the column is the correct derived calculation from a base date column (potential for errors when dealing with leap year dates)
 
 {% test date_difference_consistent(model, column_name, date_part, difference_value, base_date_column) %}
 
