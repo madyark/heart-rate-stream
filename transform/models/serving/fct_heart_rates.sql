@@ -1,3 +1,10 @@
+{{
+  config(
+    cluster_by=['event_date']
+  )
+}}
+
+
 -- use users dimension to map user_id from heart rate data to correct user_key
 with users as ( 
     select 
@@ -46,8 +53,3 @@ inner join users u
 inner join activities a
     on a.activity_id=hr.activity_id
         and event_datetime between a.activity_start_date and coalesce(a.activity_end_date, current_timestamp)
-
-order by 
-    event_datetime, 
-    user_key, 
-    activity_key
