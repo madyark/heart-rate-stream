@@ -25,10 +25,10 @@ s as (
 )
 
 select 
-    h.hour || ':' || m.minute || ':' || s.second as hh_mm_ss,
-    h.hour, 
-    m.minute, 
-    s.second,
+    (h.hour || ':' || m.minute || ':' || s.second)::time as hh_mm_ss,
+    h.hour::int as hour, 
+    m.minute::int as minute, 
+    s.second::int as second,
     case 
         when h.hour::int < 6 then 'Night'
         when h.hour::int < 12 then 'Morning'

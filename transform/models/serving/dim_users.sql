@@ -64,7 +64,7 @@ final as (
         ur.start_date is not null -- filters out the empty deleted_row field 
     
     order by 
-        ur.date_of_birth -- clustering key as column likely to be used in filtering
+        ur.date_of_birth, ur.user_id, ur.start_date -- clustering key as column likely to be used in filtering
 )
 
 select * from final

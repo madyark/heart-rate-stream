@@ -39,3 +39,6 @@ models:
     serving:
       +schema: serving
       +materialized: table
+
+vars:
+  'dbt_date:time_zone': 'Etc/UTC'

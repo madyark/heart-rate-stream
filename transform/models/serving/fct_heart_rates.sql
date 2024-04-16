@@ -1,26 +1,55 @@
+{{
+  config(
+    cluster_by=['event_date']
+  )
+}}
+
+
+-- use users dimension to map user_id from heart rate data to correct user_key
+with users as ( 
+    select 
+        user_key,
+        user_id,
+        start_date as user_start_date,
+        end_date as user_end_date
+    
+    from 
+        {{ ref('dim_users') }} 
+), 
+
+-- user activities dimension to map activity_id from heart rate data to correct activity_key
+activities as (
+    select 
+        activity_key, 
+        activity_id,
+        start_date as activity_start_date,
+        end_date as activity_end_date
+    
+    from 
+        {{ ref('dim_activities') }} 
+)
+
 select
-    user_id,
-    to_date(to_timestamp_ntz(timestamp::string)) as date,
-    to_char(to_time(to_timestamp_ntz(timestamp::string)), 'HH24:MI:SS') AS time,
-    heart_rate,
-    lag(heart_rate) over (partition by user_id, activity_id, date order by timestamp) as previous_heart_rate,
-    max(heart_rate) over (partition by user_id, activity_id, date) AS max_heart_rate,
-    min(heart_rate) over (partition by user_id, activity_id, date) AS min_heart_rate,
-    round(avg(heart_rate) over (partition by user_id, activity_id, date),2) AS avg_heart_rate,
-    activity_id,
-    latitude,
-    longitude
+    u.user_key,
+    a.activity_key,
+    to_date(to_timestamp_ntz(hr.timestamp)) as event_date,
+    to_char(to_time(to_timestamp_ntz(hr.timestamp)), 'HH24:MI:SS')::time AS event_time,
+    to_timestamp_ntz(hr.timestamp) as event_datetime,
+    hr.heart_rate,
+    lag(hr.heart_rate) over (partition by u.user_key, hr.activity_id, hr.latitude, hr.longitude, event_date order by timestamp) as previous_heart_rate,
+    max(hr.heart_rate) over (partition by u.user_key, hr.activity_id, hr.latitude, hr.longitude, event_date) AS max_heart_rate,
+    min(heart_rate) over (partition by u.user_key, hr.activity_id, hr.latitude, hr.longitude, event_date) AS min_heart_rate,
+    round(avg(heart_rate) over (partition by u.user_key, hr.activity_id, hr.latitude, hr.longitude, event_date),2) AS avg_heart_rate,
+    hr.latitude,
+    hr.longitude
 
 from 
-    {{ ref('stg_heart_rates') }} 
+    {{ ref('stg_heart_rates') }} hr
 
-where 
-    activity_id LIKE '2____' -- filter out stream data that used test activity_id values
+inner join users u
+    on u.user_id=hr.user_id
+        and event_datetime between u.user_start_date and coalesce(u.user_end_date, current_timestamp)
 
-order by 
-    date, 
-    time, 
-    user_id, 
-    activity_id, 
-    latitude, 
-    longitude
+inner join activities a
+    on a.activity_id=hr.activity_id
+        and event_datetime between a.activity_start_date and coalesce(a.activity_end_date, current_timestamp)
