@@ -1,0 +1,18 @@
+version: 2
+
+seeds:
+  - name: country_codes
+    description: A mapping of two letter country codes to country names
+    columns:
+      - name: name
+        description: Country name
+        tests:
+          - unique
+          - not_null
+      - name: alpha2
+        description: Two letter country code
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_value_lengths_to_equal:
+              value: 2
