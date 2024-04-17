@@ -4,6 +4,21 @@
     <img src="docs/img/hr-gif.gif" alt="Heart rate animation" />
 </p>
 
+## Table of Contents
+- [Overview](#overview)
+- [Project Components](#project-components)
+  - [Synthetic OLTP Data Generation](#1-synthetic-oltp-data-generation)
+  - [Simulated Heart Rate Stream](#2-simulated-heart-rate-stream)
+  - [Streaming to Kafka](#3-streaming-to-kafka)
+  - [Sinking to S3](#4-sinking-to-s3)
+  - [Ingestion with Airbyte](#5-ingestion-with-airbyte)
+  - [Transformation with dbt](#6-transformation-with-dbt)
+  - [Star Schema Modeling](#7-star-schema-modeling)
+  - [Tableau Semantic Layer](#8-tableau-semantic-layer)
+- [Implementation](#implementation)
+- [Screenshots](#screenshots)
+- [Limitations and Next Steps](#limitations-and-next-steps)
+
 ## Overview
 
 This project implements a data pipeline for historical analysis of heart rate data, primarily catering to medical and research specialists studying cardiovascular health. 
