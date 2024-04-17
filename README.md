@@ -26,7 +26,7 @@ The following research questions could be answered with the warehoused data:
 
 ## Project Components:
 
-<img src="docs/img/architecture.png" alt="Architecture diagram" />
+<img src="docs/img/architecture.svg" alt="Architecture diagram with animation for stream connectors" />
 
 ### 1. Synthetic OLTP Data Generation 
 
