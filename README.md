@@ -96,6 +96,8 @@ Data transformation tasks are performed using dbt (Data Build Tool). The transfo
 
 ### 7. Star Schema Modeling
 
+<img src="docs/img/erd.png">
+
 This design optimizes query performance and facilitates intuitive analysis by organizing data into fact and dimension tables. 
 
 - Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). 
@@ -104,6 +106,10 @@ This design optimizes query performance and facilitates intuitive analysis by or
 ### 8. Tableau Semantic Layer
 
 <img src="docs/img/dashboard.png">
+
+Tableau workbook link: 
+
+`https://prod-uk-a.online.tableau.com/#/site/kozhakhmetovmadyarc93986ed13/workbooks/856915?:origin=card_share_link`
 
 ## Implementation
 
