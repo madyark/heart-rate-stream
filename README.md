@@ -101,6 +101,9 @@ This design optimizes query performance and facilitates intuitive analysis by or
 - Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). 
 - Certain dimension tables are implemented as Type 2 Slowly Changing Dimension (SCD) enabling historical tracking of dimensional data (e.g. difference in heart rate for when a user has recorded a change in weight). 
 
+### 8. Tableau Semantic Layer
+
+<img src="docs/img/dashboard.png">
 
 ## Implementation
 
