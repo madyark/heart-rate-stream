@@ -79,7 +79,7 @@ Heart rate data format:
 }
 ```
 
-Both JSON and AVRO formats were considered for sending heart rate records, however JSON was chosen for its simplicity and cost-effectiveness. While AVRO offers schema evolution and binary encoding, JSON ended up incurring lower storage costs compared to AVRO for transmitting heart rate data over the network.
+Both JSON and AVRO formats were considered for sending heart rate records, however JSON was chosen as it incurred lower storage costs compared to AVRO when transmitting heart rate data over the network.
 
 To run a custom made script to generate JSON and AVRO files with mock heart rate data:  
 
@@ -122,9 +122,7 @@ This design optimizes query performance and facilitates intuitive analysis by or
 
 <img src="docs/img/dashboard.png">
 
-Tableau workbook link: 
-
-`https://prod-uk-a.online.tableau.com/#/site/kozhakhmetovmadyarc93986ed13/workbooks/856915?:origin=card_share_link`
+[Tableau workbook link](https://prod-uk-a.online.tableau.com/#/site/kozhakhmetovmadyarc93986ed13/workbooks/856915?:origin=card_share_link)
 
 ## Implementation
 
