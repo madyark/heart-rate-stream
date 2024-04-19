@@ -13,7 +13,7 @@
   - [Sinking to S3](#4-sinking-to-s3)
   - [Ingestion with Airbyte](#5-ingestion-with-airbyte)
   - [Transformation with dbt](#6-transformation-with-dbt)
-  - [Star Schema Modeling](#7-star-schema-modeling)
+  - [Orchestration with Dagster](#7-orchestration-with-dagster)
   - [Tableau Semantic Layer](#8-tableau-semantic-layer)
 - [Implementation](#implementation)
 - [Screenshots](#screenshots)
@@ -111,8 +111,6 @@ S3 bucket file structure:
 
 ### 5. Ingestion with Airbyte
 
-#### Airbyte Extraction Set Up
-
 An EC2-deployed Airbyte instance is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
 
 For the S3 to Snowflake sync, first an S3 source is established with the following configurations:
@@ -134,27 +132,13 @@ The selected replication sync mode for the S3 -> Snowflake connection is `Increm
 
 For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode of `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode in order to keep all previous instances of a specific record for the future Type 2 Slowly Changing Dimension implementation in our data warehouse.
 
+Both connections load the data inside `raw` schema of our warehouse database, where the tables are incrementally appended to each time Airbyte extracts new records from either the source files/tables. 
+
 Manual replication mode is used for both connections as the decision of when to trigger the sync is left to the selected data orchestration tool (Dagster).
 
 Airbyte UI landing page: 
 
 <img src="docs/img/airbyte-home.png" alt="Landing page of Airbyte UI showing S3-to-Snowflake and Postgres-to-Snowflake connections" />
-
-#### Airbyte Load to Snowflake Warehouse
-
-Both connections load the data inside `raw` schema of our warehouse database, where the tables are incrementally appended to each time Airbyte extracts new records from either the source files/tables. 
-
-Preview of the `raw.users` table:
-
-<img src="docs/img/snowflake-raw-users.png" alt="Query return of the users raw table" />
-
-Preview of the `raw.activities` table:
-
-<img src="docs/img/snowflake-raw-activities.png" alt="Query return of the activities raw table" />
-
-Preview of the `raw.heart_rate_stream` table:
-
-<img src="docs/img/snowflake-raw-stream.png" alt="Query return of the heart_rate_stream raw table" />
 
 ### 6. Transformation with dbt
 
@@ -176,7 +160,11 @@ To streamline development and production environments, the project leverages two
 
 The data assets generated or inherited by dbt were broken down into three different stages (sources, staging, serving), the files for which can be found inside the `transform/models` directory. 
 
-The three source tables 
+The three source tables are defined in the `sources.yml` file, as well as the descriptions and comprehensive data quality tests for each of their fields. The data quality tests consist of out-of-the-box dbt tests, tests found in the `dbt_expectations` package, as well as self-defined SQL test files (singular and generic) which can be found inside the `tests` folder. Thorough testing of source assets was done in order to ensure their integrity and data quality as early as possible, allowing the pipeline to detect and address issues before they have a chance to impact downstream processes.
+
+A seed file (`country_codes.csv`) was added to test if the source users data table correctly maps country codes to appropriate country names. The seed file installation is facilitated through `dbt seed`, enhancing our data validation efforts. The CSV file as well as a `schema.yml` file to document and test the seed can be found inside the `transform/seeds` folder. 
+
+
 
 <img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
 
@@ -189,14 +177,13 @@ Documentation and testing are fundamental aspects of our data transformation wor
 
 #### Utilization of Seed File
 
-For validating country codes mapped to country names, we utilize a seed file (`country_codes.csv`). This file ensures accuracy in the mapping process, testing if source data correctly assigns country codes to country names. The seed file installation is facilitated through `dbt seed`, enhancing our data validation efforts.
+
 
 #### Tests and Descriptions
 
 Tests and descriptions for documentation can be found in `sources.yml`, `staging.yml`, and `serving.yml` for the relevant models, providing comprehensive insights into our data transformation processes and ensuring transparency and reproducibility.
 
-
-### 7. Star Schema Modeling
+### 7. Orchestration with Dagster
 
 <img src="docs/img/erd.png" alt="ERD diagram of transformed data" />
 
@@ -218,6 +205,18 @@ This design optimizes query performance and facilitates intuitive analysis by or
 <img src="docs/img/kafka-topic-messages.png" alt="Kafka topic when stream is running" />
 
 <img src="docs/img/kafka-cluster-metrics.png" alt="Kafka cluster metrics" />
+
+Preview of the `raw.users` table:
+
+<img src="docs/img/snowflake-raw-users.png" alt="Query return of the users raw table" />
+
+Preview of the `raw.activities` table:
+
+<img src="docs/img/snowflake-raw-activities.png" alt="Query return of the activities raw table" />
+
+Preview of the `raw.heart_rate_stream` table:
+
+<img src="docs/img/snowflake-raw-stream.png" alt="Query return of the heart_rate_stream raw table" />
 
 <img src="docs/img/tableau-data-source.png" alt="Setting up data source in Tableau" />
 
