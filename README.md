@@ -95,7 +95,9 @@ A Kafka cluster and topic were established for real-time data ingestion inside o
 
 Confluent Cloud's connectors facilitated the setup of an S3 sink connector for efficient data transfer to an S3 bucket. An IAM role was configured to grant Confluent the necessary permissions to write data to the S3 bucket. 
 
-<img src="docs/img/kafka-lineage.png" />
+Kafka topic data lineage: 
+
+<img src="docs/img/kafka-lineage.png" alt="Kafka topic data lineage" />
 
 ### 4. Sinking to S3
 
@@ -103,11 +105,36 @@ The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM
 
 The decision to use a cloud data lake to persistently store the raw streaming data enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. Additionally, if data is corrupted somewhere within the load or transformation part of the ELT pipeline, it is always possible revert to the original, unaltered data for reprocessing or troubleshooting purposes.
 
-<img src="docs/img/s3-folder-structure.png" />
+S3 bucket file structure:
+
+<img src="docs/img/s3-folder-structure.png" alt="S3 bucket directory hierarchy" />
 
 ### 5. Ingestion with Airbyte
 
-Airbyte is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
+An EC2-deployed Airbyte instance is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
+
+For the S3 to Snowflake sync, first an S3 source is established with the following configurations:
+
+```
+| Config Name                      | Config Value     |
+|----------------------------------|------------------|
+| Bucket                           | <name-of-bucket> |
+| Format                           | Jsonl format     |
+| Name                             | heart_rate_stream|
+| Globs                            | **               |
+| Days to sync if history is full  | 3                |
+| Input schema                     | N/A              |
+| Schemaless                       | Unselected       |
+| Validation policy                | Emit record      |
+```
+
+The selected replication sync mode for the S3 -> Snowflake connection is `Incremental | Append` with the Airbyte-generated `_ab_source_file_last_modified` column used as the cursor field. Inside AWS's Identity Access Management, a separate *airbyte-stream-reader* user was created with read access to the S3 bucket. 
+
+For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode as in order to keep all previous instances of a specific record for the future Type 2 Slowly Changing Dimension implementation in our data warehouse.   
+
+Airbyte UI landing page: 
+
+<img src="docs/img/airbyte-home.png" alt="Landing page of Airbyte UI showing S3-to-Snowflake and Postgres-to-Snowflake connections" />
 
 ### 6. Transformation with dbt
 
@@ -115,7 +142,7 @@ Data transformation tasks are performed using dbt (Data Build Tool). The transfo
 
 ### 7. Star Schema Modeling
 
-<img src="docs/img/erd.png">
+<img src="docs/img/erd.png" alt="ERD diagram of transformed data" />
 
 This design optimizes query performance and facilitates intuitive analysis by organizing data into fact and dimension tables. 
 
@@ -135,6 +162,8 @@ This design optimizes query performance and facilitates intuitive analysis by or
 <img src="docs/img/kafka-topic-messages.png" alt="Kafka topic when stream is running" />
 
 <img src="docs/img/kafka-cluster-metrics.png" alt="Kafka cluster metrics" />
+
+<img src="docs/img/tableau-data-source.png" alt="Setting up data source in Tableau" />
 
 ## Limitations and Next Steps
 
