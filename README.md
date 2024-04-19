@@ -160,13 +160,17 @@ To streamline development and production environments, the project leverages two
 
 The data assets generated or inherited by dbt were broken down into three different stages (sources, staging, serving), the files for which can be found inside the `transform/models` directory. 
 
+<img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
+
 The three source tables are defined in the `sources.yml` file, as well as the descriptions and comprehensive data quality tests for each of their fields. The data quality tests consist of out-of-the-box dbt tests, tests found in the `dbt_expectations` package, as well as self-defined SQL test files (singular and generic) which can be found inside the `tests` folder. Thorough testing of source assets was done in order to ensure their integrity and data quality as early as possible, allowing the pipeline to detect and address issues before they have a chance to impact downstream processes.
 
 A seed file (`country_codes.csv`) was added to test if the source users data table correctly maps country codes to appropriate country names. The seed file installation is facilitated through `dbt seed`, enhancing our data validation efforts. The CSV file as well as a `schema.yml` file to document and test the seed can be found inside the `transform/seeds` folder. 
 
+Staging models
 
+Serving models
 
-<img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
+Macros
 
 #### Documentation and Testing
 
