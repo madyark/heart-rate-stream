@@ -2,12 +2,12 @@
 
 with raw_hr_table as (
     select count(*) as raw_row_count
-    from {{ source('stream_data', 'heart_rate_stream') }} 
+    from {{ source('raw', 'heart_rate_stream') }} 
 ),
 
 filtered_raw_hr_table as (
     select count(*) as filtered_raw_row_count
-    from {{ source('stream_data', 'heart_rate_stream') }} 
+    from {{ source('raw', 'heart_rate_stream') }} 
     where timestamp<='1712343600'
 ),
 

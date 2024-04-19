@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: stream_data
+  - name: raw
     database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
     schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
     tables:

@@ -15,7 +15,7 @@ select
     _airbyte_extracted_at::timestamp_ntz as extracted_at
 
 from 
-    {{ source('stream_data', 'heart_rate_stream') }} 
+    {{ source('raw', 'heart_rate_stream') }} 
 
 where 
     -- Remove heart rate records that were used for testing (with different/invalid user and activity IDs)

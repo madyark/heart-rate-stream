@@ -25,7 +25,7 @@ select
     _airbyte_extracted_at::timestamp_ntz as extracted_at
 
 from 
-    {{ source('stream_data', 'users') }} 
+    {{ source('raw', 'users') }} 
 
 {% if is_incremental() %}
     where extracted_at > (select max(extracted_at) from {{ this }} )
