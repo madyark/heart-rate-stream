@@ -111,6 +111,8 @@ S3 bucket file structure:
 
 ### 5. Ingestion with Airbyte
 
+#### Airbyte Extraction Set Up
+
 An EC2-deployed Airbyte instance is used to ingest the static operational RDS data and the unbounded S3 stream data into the data warehouse hosted on Snowflake.
 
 For the S3 to Snowflake sync, first an S3 source is established with the following configurations:
@@ -138,7 +140,9 @@ Airbyte UI landing page:
 
 <img src="docs/img/airbyte-home.png" alt="Landing page of Airbyte UI showing S3-to-Snowflake and Postgres-to-Snowflake connections" />
 
-Both connections load the data inside `raw` schema of our database, which is incrementally appended to each time Airbyte extracts new records from either the PostgreSQL or S3 source. 
+#### Airbyte Load to Snowflake Warehouse
+
+Both connections load the data inside `raw` schema of our warehouse database, where the tables are incrementally appended to each time Airbyte extracts new records from either the source files/tables. 
 
 Preview of the `raw.users` table:
 
