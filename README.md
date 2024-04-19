@@ -99,7 +99,11 @@ Confluent Cloud's connectors facilitated the setup of an S3 sink connector for e
 
 ### 4. Sinking to S3
 
-The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM/DD/HH directory format). This approach enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. 
+The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM/DD/HH directory format). Then, within each directory, a separate JSON file is created for each partition which stores the stream data relevant to that specific partition. 
+
+The decision to use a cloud data lake to persistently store the raw streaming data enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. Additionally, if data is corrupted somewhere within the load or transformation part of the ELT pipeline, it is always possible revert to the original, unaltered data for reprocessing or troubleshooting purposes.
+
+<img src="docs/img/s3-folder-structure.png" />
 
 ### 5. Ingestion with Airbyte
 
