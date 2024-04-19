@@ -130,15 +130,67 @@ For the S3 to Snowflake sync, first an S3 source is established with the followi
 
 The selected replication sync mode for the S3 -> Snowflake connection is `Incremental | Append` with the Airbyte-generated `_ab_source_file_last_modified` column used as the cursor field. Inside AWS's Identity Access Management, a separate *airbyte-stream-reader* user was created with read access to the S3 bucket. 
 
-For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode as in order to keep all previous instances of a specific record for the future Type 2 Slowly Changing Dimension implementation in our data warehouse.   
+For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode of `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode in order to keep all previous instances of a specific record for the future Type 2 Slowly Changing Dimension implementation in our data warehouse.
+
+Manual replication mode is used for both connections as the decision of when to trigger the sync is left to the selected data orchestration tool (Dagster).
 
 Airbyte UI landing page: 
 
 <img src="docs/img/airbyte-home.png" alt="Landing page of Airbyte UI showing S3-to-Snowflake and Postgres-to-Snowflake connections" />
 
+Both connections load the data inside `raw` schema of our database, which is incrementally appended to each time Airbyte extracts new records from either the PostgreSQL or S3 source. 
+
+Preview of the `raw.users` table:
+
+<img src="docs/img/snowflake-raw-users.png" alt="Query return of the users raw table" />
+
+Preview of the `raw.activities` table:
+
+<img src="docs/img/snowflake-raw-activities.png" alt="Query return of the activities raw table" />
+
+Preview of the `raw.heart_rate_stream` table:
+
+<img src="docs/img/snowflake-raw-stream.png" alt="Query return of the heart_rate_stream raw table" />
+
 ### 6. Transformation with dbt
 
-Data transformation tasks are performed using dbt (Data Build Tool). The transformation tasks are broken down into different stages (staging, serving) and the data is broken into different models adopting a Kimball-style star schema design.
+Data transformation tasks are performed using a dbt (Data Build Tool) project, whose files can be found inside the `transform/` directory. 
+
+The following commands were used to install dbt in the local environment:
+
+```
+pip install dbt-core==1.7.3
+pip install dbt-snowflake==1.7.0
+```
+
+The `dbt init` command was used to initialize the dbt project. Use the `dbt deps` command to ensure all required packages defined in `packages.yml` are installed and ready for use. Finally, the `dbt build` command compiles and constructs all of the seeds, tests, and models defined in the project, shaping transformed data into the desired format for subsequent analysis and reporting.
+
+To streamline development and production environments, the project leverages two profiles defined in `profiles.yml`: `dev` and `prod`. To target specific profiles use the following commands: 
+
+- `dbt build --target dev`
+- `dbt build --target prod`
+
+The data assets generated or inherited by dbt were broken down into three different stages (sources, staging, serving), the files for which can be found inside the `transform/models` directory. 
+
+The three source tables 
+
+<img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
+
+#### Documentation and Testing
+
+Documentation and testing are fundamental aspects of our data transformation workflow:
+
+- **Documentation Generation:** We employ `dbt docs generate` to produce insightful data lineage and schema documentation.
+- **Thorough Testing:** `dbt test` validates the integrity of our transformed data, ensuring accuracy and consistency.
+
+#### Utilization of Seed File
+
+For validating country codes mapped to country names, we utilize a seed file (`country_codes.csv`). This file ensures accuracy in the mapping process, testing if source data correctly assigns country codes to country names. The seed file installation is facilitated through `dbt seed`, enhancing our data validation efforts.
+
+#### Tests and Descriptions
+
+Tests and descriptions for documentation can be found in `sources.yml`, `staging.yml`, and `serving.yml` for the relevant models, providing comprehensive insights into our data transformation processes and ensuring transparency and reproducibility.
+
 
 ### 7. Star Schema Modeling
 
