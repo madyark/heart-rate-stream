@@ -1,6 +1,14 @@
 {{
   config(
-    cluster_by=['event_date']
+    cluster_by=['event_date'],
+    meta={
+        "dagster":{
+            "freshness_policy": {
+                "maximum_lag_minutes": 1,
+                "cron_schedule": "30 2 * * *"
+            }
+        }
+    }
   )
 }}
 
