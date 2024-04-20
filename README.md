@@ -61,9 +61,11 @@ To run the python scripts and re-create the CSV files:
 
 Synthetic heart rate data is generated to simulate real-world scenarios, such as heart rate data measured by an Apple Watch device. 
 
-A `producer.py` script has been developed to act as a Kafka producer, leveraging the `confluent-kafka` Python library to generate the heart rate data. This script reads the already generated users and activities CSV files to pick out a random activity ID and user ID, sending it along with a randomly-generated heart rate to the Kafka topic. The script has been containerized inside a Docker image using a `Dockerfile` located in the root folder of the project, which is then pushed into Amazon ECR and ran using a continuously-running ECS task.
+A `producer.py` script has been developed to act as a Kafka producer, leveraging the `confluent-kafka` Python library to generate the heart rate data. This script reads the already generated users and activities CSV files to pick out a random activity ID and user ID, sending it along with a randomly-generated heart rate to the Kafka topic. 
 
-The Faker library is also used to generate a random latitude and longitude coordinates based on the user's address country. This as well as a timestamp column (indicating the event time) are added to the heart rate data record and sent as a JSON object to the Kafka topic for processing. 
+The script has been containerized inside a Docker image using a `Dockerfile` located in the root folder of the project, which is then pushed into Amazon ECR and ran using a continuously-running ECS task.
+
+The Faker library is again used inside the `producer.py` script to generate a random latitude and longitude coordinates based on the user's address country. This as well as a timestamp column (indicating the event time) are added to the heart rate data record and sent as a JSON object to the Kafka topic for processing. 
 
 Heart rate data format: 
 
@@ -160,8 +162,6 @@ To streamline development and production environments, the project leverages two
 
 The data assets generated or inherited by dbt were broken down into three different stages (sources, staging, serving), the files for which can be found inside the `transform/models` directory. 
 
-<img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
-
 The three source tables are defined in the `sources.yml` file, as well as the descriptions and comprehensive data quality tests for each of their fields. The data quality tests consist of out-of-the-box dbt tests, tests found in the `dbt_expectations` package, as well as self-defined SQL test files (singular and generic) which can be found inside the `tests` folder. Thorough testing of source assets was done in order to ensure their integrity and data quality as early as possible, allowing the pipeline to detect and address issues before they have a chance to impact downstream processes.
 
 A seed file (`country_codes.csv`) was added to test if the source users data table correctly maps country codes to appropriate country names. The seed file installation is facilitated through `dbt seed`, enhancing our data validation efforts. The CSV file as well as a `schema.yml` file to document and test the seed can be found inside the `transform/seeds` folder. 
@@ -171,6 +171,8 @@ Staging models
 Serving models
 
 Macros
+
+<img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models">
 
 #### Documentation and Testing
 
