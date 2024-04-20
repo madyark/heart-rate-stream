@@ -432,6 +432,11 @@ models:
               sort_column: end_date 
               group_by: [user_id]
               row_condition: "end_date is not null" 
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
 
   - name: dim_activities
     description: Type 2 Slowly-Changing Dimension table for activity names data
@@ -474,7 +479,12 @@ models:
               sort_column: end_date 
               group_by: [activity_id]
               row_condition: "end_date is not null" 
-  
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
+
   - name: fct_heart_rates
     description: Transaction fact table for heart rate data
     tests:
@@ -532,3 +542,8 @@ models:
         description: Latitude of the event location
       - name: longitude
         description: Longitude of the event location
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager

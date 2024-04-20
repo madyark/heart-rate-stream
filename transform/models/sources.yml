@@ -4,6 +4,11 @@ sources:
   - name: raw
     database: '{{ env_var("SNOWFLAKE_DATABASE") }}'
     schema: '{{ env_var("SNOWFLAKE_SCHEMA") }}'
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
     tables:
       - name: heart_rate_stream
         description: Heart rate records loaded from S3 bucket

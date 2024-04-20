@@ -34,6 +34,11 @@ models:
               max_value: 180
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
 
   - name: stg_users
     description: Staging table for users data
@@ -74,6 +79,11 @@ models:
         description: Timestamp indicating when the user record was deleted (if applicable)
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
   
   - name: stg_activities
     description: Staging table for activities data
@@ -90,3 +100,8 @@ models:
         description: Timestamp indicating when the activity record was deleted (if applicable)
       - name: extracted_at
         description: Timestamp indicating when the data was extracted
+    config:
+      meta:
+        dagster:
+          auto_materialize_policy:
+            type: eager
