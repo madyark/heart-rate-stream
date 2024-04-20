@@ -6,12 +6,16 @@
             "freshness_policy": {
                 "maximum_lag_minutes": 1,
                 "cron_schedule": "30 2 * * *"
+            },
+            "auto_materialize_policy": {
+                "type": "eager"
             }
         }
     }
   )
 }}
 
+-- Create fact table that will materialize every day at 2:30 A.M. along with its upstream assets
 
 -- use users dimension to map user_id from heart rate data to correct user_key
 with users as ( 
