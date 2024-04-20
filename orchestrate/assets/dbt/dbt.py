@@ -24,4 +24,4 @@ dbt_manifest_path = (
 # Load dbt assets from manifest.json file
 @dbt_assets(manifest=dbt_manifest_path)
 def dbt_warehouse(context: AssetExecutionContext, dbt_warehouse_resource: DbtCliResource):
-    yield from dbt_warehouse_resource.cli(["build"], context=context).stream()
+    yield from dbt_warehouse_resource.cli(["build", "--target", "prod"], context=context).stream()
