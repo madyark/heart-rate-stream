@@ -189,7 +189,6 @@ Documentation and testing are fundamental aspects of our data transformation wor
 
 Tests and descriptions for documentation can be found in `sources.yml`, `staging.yml`, and `serving.yml` for the relevant models, providing comprehensive insights into our data transformation processes and ensuring transparency and reproducibility.
 
-### 7. Orchestration with Dagster
 
 <img src="docs/img/erd.png" alt="ERD diagram of transformed data" />
 
@@ -197,6 +196,10 @@ This design optimizes query performance and facilitates intuitive analysis by or
 
 - Fact tables contain measurable data (heart rate measurements), while dimension tables provide context (user information, timestamp details). 
 - Certain dimension tables are implemented as Type 2 Slowly Changing Dimension (SCD) enabling historical tracking of dimensional data (e.g. difference in heart rate for when a user has recorded a change in weight). 
+
+### 7. Orchestration with Dagster
+
+<img src="docs/img/dagster.svg" alt="Materialized assets in Dagster" />
 
 ### 8. Tableau Semantic Layer
 
@@ -229,3 +232,6 @@ Preview of the `raw.heart_rate_stream` table:
 ## Limitations and Next Steps
 
 To enhance the `producer.py` script, consider modifying it to connect to the RDS-hosted PostgreSQL database using SQLAlchemy instead of reading data from CSV files. This approach can provide real-time access to the most up-to-date user and activity data stored in the database, improving the accuracy and timeliness of the generated heart rate stream.
+
+#### Known Issues
+
