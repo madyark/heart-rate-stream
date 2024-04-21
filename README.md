@@ -107,8 +107,6 @@ The S3 bucket partitions and stores the streamed data by its event time (YYYY/MM
 
 The decision to use a cloud data lake to persistently store the raw streaming data enables reusability of the data for subsequent workflows, such as machine learning pipelines operating on raw data. Additionally, if data is corrupted somewhere within the load or transformation part of the ELT pipeline, it is always possible revert to the original, unaltered data for reprocessing or troubleshooting purposes.
 
-S3 bucket file structure:
-
 <img src="docs/img/s3-folder-structure.png" alt="S3 bucket directory hierarchy" />
 
 ### 5. Ingestion with Airbyte
@@ -206,7 +204,7 @@ The `dim_users` and `dim_activities` dimension tables are extensions of their st
 
 Everytime a record is updated in the operational database, Airbyte Incremental Change Data Capture (CDC) appends a new row in the raw schema with the updated values (including a new `last_update` value from the OLTP database). For hard deletes, Airbyte creates a row with a matching ID and a timestamp in the `_ab_cdc_deleted_at` field. The two dimensional tables then map the `start_date` and `end_date` for each business key to the appropriate timestamp. All currently active records have an `end_date` value of *`NULL`*.  
 
-The `fct_heart_rates` fact table contains each heart rate transaction record, but can only declare the corresponding user and activity IDs, but not to the surrogate key that maps to the relevant version of each business key (for example, if this activity ID no longer corresponds to walking but rather High Intensity Interval Training). Thus, a join has to be performed to map the record to the corresponding surrogate key, and the record is only joined if it has the corresponding ID and the event timestamp is between the start and end dates of the ID record. This, as well as logic to produce window function calculations relevant to our analysts, are used to define the fact table in our warehouse. 
+The `fct_heart_rates` fact table contains each heart rate transaction record, but can only declare the corresponding user and activity IDs, and not to the surrogate key that maps to the relevant version of each business key (for example, if an activity ID no longer corresponds to walking but rather High Intensity Interval Training). Thus, a join has to be performed to map the record to the corresponding surrogate key, and the record is only joined if it has the corresponding ID and the event timestamp is between the start and end dates of the ID record. This, as well as logic to produce window function calculations relevant to our analysts, are used to define the fact table in our warehouse. 
 
 <img src="docs/img/erd.png" alt="ERD diagram of transformed data" />
 
