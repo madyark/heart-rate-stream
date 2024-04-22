@@ -11,7 +11,7 @@ dbt_warehouse_resource = DbtCliResource(project_dir=os.fspath(dbt_project_dir))
 # Generate manifest.json file
 dbt_manifest_path = (
     dbt_warehouse_resource.cli(
-        ["--quiet", "parse"],
+        ["--quiet", "parse", "--target", "prod"],
         target_path=Path("target"),
     )
     .wait()
