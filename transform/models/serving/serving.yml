@@ -321,7 +321,11 @@ models:
           - dbt_expectations.expect_column_values_to_match_regex:
               regex: '\d\d\d\d-12-31'
               is_raw: True 
-  
+    config:
+      meta:
+        dagster:
+          group: dbt_warehouse
+
   - name: dim_times
     description: Dimension table for times data (grain in seconds)
     tests:
@@ -362,6 +366,10 @@ models:
           - not_null
           - accepted_values:
               values: ["Morning", "Afternoon", "Evening", "Night"]
+    config:
+      meta:
+        dagster:
+          group: dbt_warehouse
 
   - name: dim_users
     description: Type 2 Slowly-Changing Dimension table for users data
@@ -435,6 +443,7 @@ models:
     config:
       meta:
         dagster:
+          group: dbt_warehouse
           auto_materialize_policy:
             type: eager
 
@@ -482,6 +491,7 @@ models:
     config:
       meta:
         dagster:
+          group: dbt_warehouse
           auto_materialize_policy:
             type: eager
 
@@ -545,5 +555,6 @@ models:
     config:
       meta:
         dagster:
+          group: dbt_warehouse
           auto_materialize_policy:
             type: eager

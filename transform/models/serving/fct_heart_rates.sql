@@ -9,7 +9,8 @@
             },
             "auto_materialize_policy": {
                 "type": "eager"
-            }
+            },
+            "group": "dbt_warehouse"
         }
     }
   )
