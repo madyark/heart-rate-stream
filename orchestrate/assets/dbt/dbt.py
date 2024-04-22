@@ -9,7 +9,14 @@ dbt_project_dir = Path(__file__).joinpath("..", "..", "..", "..", "transform").r
 dbt_warehouse_resource = DbtCliResource(project_dir=os.fspath(dbt_project_dir))
 
 # Configure manifest.json file path
-dbt_manifest_path = dbt_project_dir.joinpath("target", "manifest.json")
+dbt_manifest_path = (
+        dbt_warehouse_resource.cli(
+            ["--quiet", "parse", "--target", "prod"],
+            target_path=Path("target"),
+        )
+        .wait()
+        .target_path.joinpath("manifest.json")
+)
 
 # Load dbt assets from manifest.json file
 @dbt_assets(manifest=dbt_manifest_path)
