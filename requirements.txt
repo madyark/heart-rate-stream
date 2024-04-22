@@ -10,4 +10,4 @@ kafka-python==2.0.2
 confluent-kafka
 dbt-core==1.7.3
 dbt-snowflake==1.7.0
-dagster==1.7.2
+dagster
