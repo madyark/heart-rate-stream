@@ -68,7 +68,7 @@ jobs:
           ref: ${{ github.head_ref }}
       
       - run: "pip install dbt-core"
-      - run: "dbt deps --project-dir $GITHUB_WORKSPACE/project-repo/transform"
+      - run: "dbt deps --project-dir $GITHUB_WORKSPACE/project-repo/dbt_project"
 
       - name: Build and deploy to Dagster Cloud serverless
         uses: dagster-io/dagster-cloud-action/actions/serverless_prod_deploy@v0.1
