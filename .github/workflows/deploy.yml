@@ -66,6 +66,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
+      
+      - run: "pip install dbt-core"
+      - run: "dbt deps --project-dir $GITHUB_WORKSPACE/heart-rate-stream/transform"
+
       - name: Build and deploy to Dagster Cloud serverless
         uses: dagster-io/dagster-cloud-action/actions/serverless_prod_deploy@v0.1
         with:
