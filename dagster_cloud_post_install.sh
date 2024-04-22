@@ -1,1 +1,1 @@
-dbt deps --project-dir ./dbt_project
+dbt deps --project-dir ./transform/ --target prod
