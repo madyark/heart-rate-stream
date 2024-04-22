@@ -5,7 +5,7 @@
         "dagster":{
             "freshness_policy": {
                 "maximum_lag_minutes": 1,
-                "cron_schedule": "*/10 * * * *"
+                "cron_schedule": "30 2 * * *"
             },
             "auto_materialize_policy": {
                 "type": "eager"
