@@ -126,9 +126,9 @@ For the S3 to Snowflake sync, first an S3 source is established with the followi
 
 The selected replication sync mode for the S3 -> Snowflake connection is `Incremental | Append` with the Airbyte-generated `_ab_source_file_last_modified` column used as the cursor field. Inside AWS's Identity Access Management, a separate *airbyte-stream-reader* user was created with read access to the S3 bucket. 
 
-For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode of `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode in order to keep all previous instances of a specific record for the future Type 2 Slowly Changing Dimension implementation in our data warehouse.
+For the PostgreSQL to Snowflake sync, CDC configuration was added to detect incremental inserts, updates, and hard-deletes from the source database. Then, instead of using the automatically-configured replication sync mode of `Incremental | Append + Deduped` (which would overwrite updated records based on the source table primary key), we use an `Incremental | Append` sync mode in order to keep all previous instances of a specific record, which will help us with the Type 2 Slowly Changing Dimension implementation in our data warehouse.
 
-Both connections load the data inside `raw` schema of our warehouse database, where the tables are incrementally appended to each time Airbyte extracts new records from either the source files/tables. 
+Both connections load the data inside `raw` schema of our warehouse database, where the tables are incrementally appended to each time Airbyte extracts new records from the source files/tables. 
 
 Manual replication mode is used for both connections as the decision of when to trigger the sync is left to the selected data orchestration tool (Dagster).
 
@@ -189,6 +189,10 @@ The `fct_heart_rates` fact table contains each heart rate transaction record, bu
 <img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models"> 
 
 ### 7. Orchestration with Dagster
+
+Dagster (hosted on Dagster Cloud) was chosen as our orchestrator tool due to its asset-based orchestration capabilities and seamless integration with dbt and Airbyte. A Dagster project was created, the underlying files for which can be found in the `orchestrate` directory as well as the root folder of the project. Additionally, Dagster Cloud generates GitHub Actions Workflows which can be found in the `.github/workflows` directory.
+
+Dagster automatically generates a `setup.py` file (located in the project root folder), which can be altered to include necessary packages. Run `pip install -e ".[dev]"` to install the necessary dependencies. 
 
 <img src="docs/img/dagster.svg" alt="Materialized assets in Dagster" />
 
