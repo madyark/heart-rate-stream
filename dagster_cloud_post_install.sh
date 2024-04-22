@@ -1,1 +1,1 @@
-dbt deps --project-dir ./transform
+dbt deps --project-dir ./dbt_project
