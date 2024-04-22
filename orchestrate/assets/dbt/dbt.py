@@ -8,6 +8,9 @@ from dagster_dbt import DbtCliResource, dbt_assets
 dbt_project_dir = Path(__file__).joinpath("..", "..", "..", "..", "transform").resolve()
 dbt_warehouse_resource = DbtCliResource(project_dir=os.fspath(dbt_project_dir))
 
+# Run dbt deps
+dbt_warehouse_resource.cli(["deps"]).wait()
+
 # Generate manifest.json file
 dbt_manifest_path = (
     dbt_warehouse_resource.cli(
