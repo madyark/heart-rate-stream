@@ -1,4 +1,4 @@
-from dagster import EnvVar, AutoMaterializePolicy, FreshnessPolicy
+from dagster import EnvVar, AutoMaterializePolicy
 from dagster_airbyte import AirbyteResource, load_assets_from_airbyte_instance
 
 airbyte_resource = AirbyteResource(
