@@ -246,7 +246,7 @@ This tells Dagster to refresh and re-run the the asset every day at 2:30 AM UTC 
 
 Tableau was chosen as the visualization tool for our project, enabling effortless data visualization and analysis for healthcare professionals, researchers, and fitness enthusiasts studying cardiovascular health.
 
-An interactive dashboard was generated that offers insights into the average heart rate during exercise for users based in Europe. By focusing on this specific metric and geographical region, we aim to provide targeted insights for data consumers interested in understanding cardiovascular health trends within the European population. Through interactive visualizations and filters, our data consumers can explore trends, compare data across different demographics, and derive actionable insights to support informed decision-making and personalized interventions. 
+An interactive dashboard was generated that offers insights into the average heart rate during exercise for users based in Europe. By focusing on this specific geographical region, we aim to provide targeted insights on health trends within the European population. Through interactive visualizations and filters, our data consumers can explore trends, compare data across different demographics, and derive actionable insights to support informed decision-making and personalized interventions. 
 
 [Tableau workbook link](https://prod-uk-a.online.tableau.com/#/site/kozhakhmetovmadyarc93986ed13/workbooks/856915?:origin=card_share_link)
 
