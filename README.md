@@ -264,5 +264,27 @@ An interactive dashboard was generated that offers insights into the average hea
 
 To enhance the `producer.py` script, consider modifying it to connect to the RDS-hosted PostgreSQL database using SQLAlchemy instead of reading data from CSV files. This approach can provide real-time access to the most up-to-date user and activity data stored in the database, improving the accuracy and timeliness of the generated heart rate stream.
 
-#### Known Issues
+- Add GitHub Actions for sql linting, python linting, running dbt test
+- Add unit tests for mock-data scripts
+- Add orchestrate_tests
+
+### Known Issues
+
+Whenever the EC2-hosted Airbyte instance is re-launched and the docker container is restarted, Airbyte (running on Docker) cannot find locally existing images for its source connectors or pull them from Docker Hub. As a workaround, throughout the development of this project, the directory containing the Airbyte instance is force deleted and re-created each time (the sources, destinations, and connections are cached in memory and do not have to be set up again). The following script was used inside of the EC2 terminal: 
+
+```bash
+# Restart Docker
+sudo systemctl start docker;
+
+# Delete Airbyte directory
+sudo rm -r -f airbyte;
+
+# Download and re-run airbyte
+mkdir airbyte && cd airbyte;
+wget https://raw.githubusercontent.com/airbytehq/airbyte/master/run-ab-platform.sh;
+chmod +x run-ab-platform.sh;
+./run-ab-platform.sh -b;
+```
+
+<img src="docs/img/ec2-airbyte-issue.png" alt="Airbyte error logs of not finding the image" />
 
