@@ -15,7 +15,7 @@
   - [Transformation with dbt](#6-transformation-with-dbt)
   - [Orchestration with Dagster](#7-orchestration-with-dagster)
   - [Tableau Semantic Layer](#8-tableau-semantic-layer)
-- [Screenshots](#screenshots)
+- [Implementation Screenshots](#implementation-screenshots)
 - [Limitations and Next Steps](#limitations-and-next-steps)
 
 ## Overview
@@ -257,6 +257,10 @@ An interactive dashboard was generated that offers insights into the average hea
 <img src="docs/img/kafka-topic-messages.png" alt="Kafka topic when stream is running" />
 
 <img src="docs/img/kafka-cluster-metrics.png" alt="Kafka cluster metrics" />
+
+<img src="docs/img/snowflake-scd.png" alt="Type 2 Slowly Changing Dimension example for a specific user" />
+
+<img src="docs/img/snowflake-scd-2.png" alt="Type 2 Slowly Changing Dimension example for a different user" />
 
 <img src="docs/img/tableau-data-source.png" alt="Setting up data source in Tableau" />
 
