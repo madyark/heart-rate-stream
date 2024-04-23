@@ -184,6 +184,17 @@ The `dim_users` and `dim_activities` dimension tables are extensions of their st
 
 The `fct_heart_rates` fact table contains each heart rate transaction record, but can only declare the corresponding user and activity IDs from the OLTP database, and not to the surrogate key that maps to the relevant version of each business key. Therefore, a join has to be performed to map the record to its appropriate surrogate key, which is achieved by verifying if the heart rate event timestamp (`event_datetime`) is between the `start_date` and `end_date` fields of the ID record. 
 
+```json
+{{
+  config(
+    cluster_by=['event_date'],
+    ...
+  )
+}}
+```
+
+The above clustering key configuration is additionally applied to the `fct_heart_rates` table in order to group records with the same `event_date` column within the Snowflake same micro partition. As the fact table is meant to eventually contain *millions* if not *billions* of rows, a clustering key needs to be added to optimize query performance for our analysts (who will most likely want to order or filter the heart rate data for specific dates or date ranges). 
+
 <img src="docs/img/erd.png" alt="ERD diagram of transformed data" />
 
 <img src="docs/img/dbt-generated-dag.png" alt="Auto-generated DAG by dbt of defined models"> 
@@ -192,9 +203,49 @@ The `fct_heart_rates` fact table contains each heart rate transaction record, bu
 
 Dagster (hosted on Dagster Cloud) was chosen as our orchestrator tool due to its asset-based orchestration capabilities and seamless integration with dbt and Airbyte. A Dagster project was created, the underlying files for which can be found in the `orchestrate` directory as well as the root folder of the project. Additionally, Dagster Cloud generates GitHub Actions Workflows which can be found in the `.github/workflows` directory.
 
-Dagster automatically generates a `setup.py` file (located in the project root folder), which can be altered to include necessary packages. Run `pip install -e ".[dev]"` to install the necessary dependencies. 
+Dagster automatically generates a `setup.py` file (located in the project root folder), which was configured to include necessary packages. Run `pip install -e ".[dev]"` to install the necessary dependencies. Run `dagster dev` to start the locally-hosted Dagster UI. 
+
+Assets necessary to run our data orchestration workflow are defined inside the `orchestrate/assets` folder. For this project we only wanted to orchestrate and schedule our Airbyte and dbt assets. 
+
+Inside of `assets/airbyte/airbyte.py`, assets are loaded from our EC2-hosted Airbyte instance using the `load_assets_from_airbyte_instance` function, which connects to the instance using the environment variables passed in Dagster Cloud. The `AutoMaterializePolicy.eager()` configuration is added to all of our Airbyte assets as well as a `key_prefix="raw"` in order to tell Dagster to process these assets as the ones defined in our dbt `sources.yml` file. 
+
+Assets based on the models and seeds from our dbt project are defined in `assets/dbt/dbt.py`. The assets are generated based on the `manifest.json` file dbt compiles for Dagster, which occurs every time the assets are refreshed in Dagster Cloud. However, for production use cases it is recommended to store a pre-built version of the `manifest.json` file in the project repository, in order to avoid the overhead of recompiling the dbt project each time and to avoid potentially inadvertent errors. 
+
+Additionally, a `dagster_cloud_post_install.sh` file was loaded (and made executable using the `chmod +x` command) into the root directory of our project in order to successfully run the `dbt deps` command and install necessary dbt packages when deploying to Dagster Cloud Serverless. The Dagster-generated `deploy.yml` and `branch_deployments.yml` GitHub workflows files were also modified to disable fast deploys (`ENABLE_FAST_DEPLOYS: 'false'`). 
+
+Dagster's `Auto-Materialize` policy feature was used in order to schedule and orchestrate the assets. Inside of the `fct_heart_rates` model stored in our dbt project, we added the following config code at the top of the file: 
+
+```json
+{{
+  config(
+    ... ,
+    meta={
+        "dagster":{
+            "freshness_policy": {
+                "maximum_lag_minutes": 1,
+                "cron_schedule": "30 2 * * *"
+            },
+            "auto_materialize_policy": {
+                "type": "eager"
+            },
+            "group": "dbt_warehouse"
+        }
+    }
+  )
+}}
+```
+
+This tells Dagster to refresh and re-run the the asset every day at 2:30 AM UTC time. Additionally, inside of `sources.yml`, `staging.yml`, and `serving.yml` an `auto_materialize_policy` of type `eager` was added to all models upstream of the `fct_heart_rates` table in our DAG (i.e. all models except for `dim_dates` and `dim_times`), telling Dagster to also refresh and re-run all of those models in order to meet our fact table's freshness policy. 
+
+**PLEASE NOTE**:
+
+- You need to first flip a toggle in the Dagster UI to enable assets to be auto materialized. 
+- During development a Dagster-side bug prevented `Auto-materialize` to compile for Airbyte-based assets. This bug has now been resolved. 
+- Since the EC2 instance hosting Airbyte is not continuously running but rather manually launched and stopped, Dagster GitHub workflows fail whenever the `AIRBYTE_HOST` environment variable is pointing to the previous IP address. The variable needs to be changed to the new IP address.
 
 <img src="docs/img/dagster.svg" alt="Materialized assets in Dagster" />
+
+<img src="docs/img/dagster-auto-materialize.png" alt="Auto materialize running for the fct_heart_rates model and its upstream assets" />
 
 ### 8. Tableau Semantic Layer
 
