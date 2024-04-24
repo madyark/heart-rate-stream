@@ -11,3 +11,5 @@ confluent-kafka
 dbt-core==1.7.3
 dbt-snowflake==1.7.0
 dagster
+flake8
+black
