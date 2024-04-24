@@ -8,7 +8,7 @@ SQLAlchemy==1.4.39
 pg8000==1.29.1
 kafka-python==2.0.2
 confluent-kafka
-dbt-core==1.7.3
+dbt-core==1.7.13
 dbt-snowflake==1.7.0
 dagster
 flake8
