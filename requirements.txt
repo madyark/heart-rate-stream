@@ -13,3 +13,5 @@ dbt-snowflake==1.7.0
 dagster
 flake8
 black
+sqlfluff==2.3.2
+sqlfluff-templater-dbt
