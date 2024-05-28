@@ -8,7 +8,7 @@ setup(
         "dagster-cloud",
         "dagster-airbyte",  
         "dagster-dbt",      
-        "dbt-core==1.7.3",         
+        "dbt-core==1.7.15",         
         "dbt-snowflake==1.7.0", 
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
